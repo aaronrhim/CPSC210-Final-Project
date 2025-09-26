@@ -1,4 +1,4 @@
-# Deep Learning - Custom CNN model architecture + (if time) application
+# Deep Learning - Custom CNN model functions + application (gui/graphs/button)
 
 ## Project Description  
 
