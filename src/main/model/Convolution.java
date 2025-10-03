@@ -18,14 +18,14 @@ public class Convolution {
         int kheight = 2;
 
         // valid convolution (no padding)
-        double[][] validConv = conv2D(input, width, height, k, kwidth, kheight);
-        // same-sized canvas with padding (one iteration)
+        //double[][] validConv = conv2D(input, width, height, k, kwidth, kheight);
+        // conv with padding (1-5 iters)
         double[][] sameConv = padd2D(input, width, height, k, kwidth, kheight, 1);
 
-        // Print valid conv output (size: (height-kh+1) x (width-kw+1))
-        for (int i = 0; i < validConv.length; i++) {
-            for (int j = 0; j < validConv[0].length; j++) {
-                System.out.print(validConv[i][j] + " ");
+        // print valid conv output (size: (height-kh+1) x (width-kw+1))
+        for (int i = 0; i < sameConv.length; i++) {
+            for (int j = 0; j < sameConv[0].length; j++) {
+                System.out.print(sameConv[i][j] + " ");
             }
             System.out.println();
         }
@@ -33,7 +33,6 @@ public class Convolution {
 
     public static double pointwiseConv(double[][] input, int x, int y, double[][] k, int kwidth, int kheight) {
         double output = 0;
-        // Convolve kernel into single output pixel at (x,y)
         // input[row][col] => input[y + dy][x + dx]
         for (int dx = 0; dx < kwidth; dx++) {
             for (int dy = 0; dy < kheight; dy++) {
