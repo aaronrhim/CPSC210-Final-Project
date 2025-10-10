@@ -218,14 +218,56 @@ public class ConvolutionApp {
      * relative paths.
      */
     private File resolveOutputFile(String path) {
-        File candidate = new File(path);
-        if (candidate.isAbsolute()) {
-            return candidate;
+        if (path.isEmpty()) {
+            path = defaultFileName();
         }
+
         File baseDir = new File("src/images");
         if (!baseDir.exists()) {
             baseDir.mkdirs();
         }
-        return new File(baseDir, path);
+
+        File candidate = new File(path);
+        boolean hasSeparator = path.contains("/") || path.contains(File.separator);
+
+        if (!candidate.isAbsolute() && !hasSeparator) {
+            candidate = new File(baseDir, candidate.getName());
+        } else if (!candidate.isAbsolute()) {
+            candidate = candidate.getAbsoluteFile();
+        }
+
+        if (!hasExtension(candidate.getName())) {
+            if (hasSeparator) {
+                File dir = candidate;
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                return new File(dir, defaultFileName());
+            } else {
+                File parent = candidate.getParentFile();
+                if (parent == null) {
+                    parent = baseDir;
+                }
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                return new File(parent, candidate.getName() + ".png");
+            }
+        }
+
+        File parent = candidate.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        return candidate;
+    }
+
+    private boolean hasExtension(String name) {
+        int dot = name.lastIndexOf('.');
+        return dot > 0 && dot < name.length() - 1;
+    }
+
+    private String defaultFileName() {
+        return "convolution-output.png";
     }
 }

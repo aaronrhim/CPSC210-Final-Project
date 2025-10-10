@@ -28,3 +28,8 @@ I am interested because it combines my interests in Java programming and artific
 - As a user, I want to see whether or not the model guesses my uploaded image correctly
 - As a user, I want to clone the repo myself and resume training progress from whether it last left off
 - As a user, I want to see a graph on whether or not the accuracy for predicting images is increasing or not
+- As a user, I want to see the effect of convolution on an image that I provide the program with (GUI)
+- As a user, I want to be able to input my own paths to my images for the convolution functions to apply their math to
+- As a user, I want to be able to learn more about the project just by looking through the code and seeing good documentation
+
+Phase1: Successfully completed stories 1, 6, 7, and 8

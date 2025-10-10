@@ -12,7 +12,7 @@ public final class KernelLibrary {
     private static final Map<String, double[][]> KERNELS = build();
 
     private KernelLibrary() {
-        // utility holder
+        // empty constructor
     }
 
     /*
