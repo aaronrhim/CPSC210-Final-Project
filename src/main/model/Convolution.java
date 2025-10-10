@@ -1,36 +1,15 @@
 package model;
 
+/*
+ * Performs 2D convolution over double matrices with and without padding
+ */
 public class Convolution {
-    public static void main(String[] args) {
-        double[][] input = {
-            {1.0, 2.0, 3.0},
-            {4.0, 5.0, 6.0},
-            {7.0, 8.0, 9.0}
-        };
-        int width = input[0].length;   // columns (x)
-        int height = input.length;     // rows (y)
-        double[][] k = {
-            {1 / 3.0, 1 / 3.0},
-            {1 / 3.0, 1 / 3.0}
-        };
 
-        int kwidth = 2;
-        int kheight = 2;
-
-        // valid convolution (no padding)
-        //double[][] validConv = conv2D(input, width, height, k, kwidth, kheight);
-        // conv with padding (1-5 iters)
-        double[][] sameConv = padd2D(input, width, height, k, kwidth, kheight, 1);
-
-        // print valid conv output (size: (height-kh+1) x (width-kw+1))
-        for (int i = 0; i < sameConv.length; i++) {
-            for (int j = 0; j < sameConv[0].length; j++) {
-                System.out.print(sameConv[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
+    /*
+     * REQUIRES: input and k are non-null; indices are in range
+     * MODIFIES: nothing
+     * EFFECTS: multiplies and sums the overlapping window of the kernel and input
+     */
     public static double pointwiseConv(double[][] input, int x, int y, double[][] k, int kwidth, int kheight) {
         double output = 0;
         // input[row][col] => input[y + dy][x + dx]
@@ -42,17 +21,22 @@ public class Convolution {
         return output;
     }
 
+    /*
+     * REQUIRES: input and kernel dimensions are compatible for a valid convolution
+     * MODIFIES: nothing
+     * EFFECTS: returns the valid convolution (no padding) of the input with the kernel
+     */
     public static double[][] conv2D(double[][] input, int width, int height, double[][] k, int kwidth, int kheight) {
         int outWidth = width - kwidth + 1;
         int outHeight = height - kheight + 1;
         double[][] output = new double[outHeight][outWidth]; // [rows][cols]
 
-        // initialize (optional since Java zeros arrays)
-        for (int i = 0; i < outHeight; i++) {
-            for (int j = 0; j < outWidth; j++) {
-                output[i][j] = 0;
-            }
-        }
+        // initialize
+        // for (int i = 0; i < outHeight; i++) {
+        //     for (int j = 0; j < outWidth; j++) {
+        //         output[i][j] = 0;
+        //     }
+        // }
 
         // apply pointwise convolution across the valid output region
         for (int y = 0; y < outHeight; y++) {
@@ -64,21 +48,26 @@ public class Convolution {
         return output;
     }
 
+    /*
+     * REQUIRES: input and kernel are non-null and compatible in size
+     * MODIFIES: nothing
+     * EFFECTS: returns a "same" sized convolution by centring the valid result inside a padded array
+     */
     public static double[][] convPadding(double[][] input, int width, int height,
                                          double[][] k, int kwidth, int kheight) {
-        int outWidth = width - kwidth + 1;
-        int outHeight = height - kheight + 1;
-        int top = kheight / 2;
-        int left = kwidth / 2;
+        int outWidth = width - kwidth + 1; // valid conv width
+        int outHeight = height - kheight + 1; // valid conv height
+        int top = kheight / 2; // rows of padding on top
+        int left = kwidth / 2; // cols of padding on left
 
         // Compute valid conv on original input
         double[][] small = conv2D(input, width, height, k, kwidth, kheight);
         double[][] large = new double[height][width]; // [rows][cols]
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                large[i][j] = 0;
-            }
-        }
+        // for (int i = 0; i < height; i++) {
+        //     for (int j = 0; j < width; j++) {
+        //         large[i][j] = 0;
+        //     }
+        // }
 
         for (int i = 0; i < outHeight; i++) {
             for (int j = 0; j < outWidth; j++) {
@@ -89,6 +78,11 @@ public class Convolution {
         return large;
     }
 
+    /*
+     * REQUIRES: iter >= 1 and parameters satisfy convPadding requirements
+     * MODIFIES: nothing
+     * EFFECTS: repeatedly applies padded convolution the requested number of times
+     */
     public static double[][] padd2D(double[][] input, int width, int height,
                                     double[][] k, int kwidth, int kheight, int iter) {
         double[][] newInput = input;
@@ -102,4 +96,3 @@ public class Convolution {
         return output;
     }
 }
-

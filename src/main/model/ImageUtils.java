@@ -5,16 +5,35 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/*
+ * Utility helpers for loading, saving, and converting images used in the convolution demos
+ */
 public class ImageUtils {
+
+    /*
+     * REQUIRES: path points to a readable image file
+     * MODIFIES: nothing
+     * EFFECTS: loads the image from disk and returns it
+     */
     public static BufferedImage readImage(String path) throws IOException {
         return ImageIO.read(new File(path));
     }
 
+    /*
+     * REQUIRES: img and path are not null
+     * MODIFIES: filesystem
+     * EFFECTS: writes the image to disk using the extension inferred from the path
+     */
     public static void writeImage(BufferedImage img, String path) throws IOException {
         String format = getFormatFromPath(path);
         ImageIO.write(img, format, new File(path));
     }
 
+    /*
+     * REQUIRES: path is not null
+     * MODIFIES: nothing
+     * EFFECTS: returns the file extension or defaults to png when none exists
+     */
     private static String getFormatFromPath(String path) {
         int dot = path.lastIndexOf('.')
                 ;
@@ -24,7 +43,11 @@ public class ImageUtils {
         return "png";
     }
 
-    // Convert color image to grayscale matrix [rows][cols] in range [0,1]
+    /*
+     * REQUIRES: img is not null
+     * MODIFIES: nothing
+     * EFFECTS: converts the image to a greyscale matrix with values in [0, 1]
+     */
     public static double[][] toGrayMatrix(BufferedImage img) {
         int width = img.getWidth();
         int height = img.getHeight();
@@ -43,7 +66,11 @@ public class ImageUtils {
         return out;
     }
 
-    // Convert matrix [rows][cols] in [0,1] to grayscale image
+    /*
+     * REQUIRES: mat is rectangular and values fall in a reasonable numeric range
+     * MODIFIES: nothing
+     * EFFECTS: creates a greyscale BufferedImage from the matrix
+     */
     public static BufferedImage fromMatrix(double[][] mat) {
         int height = mat.length;
         int width = mat[0].length;
@@ -58,6 +85,11 @@ public class ImageUtils {
         return img;
     }
 
+    /*
+     * REQUIRES: nothing
+     * MODIFIES: nothing
+     * EFFECTS: clamps the value into the [0,1] interval
+     */
     private static double clamp01(double v) {
         if (v < 0) {
             return 0;
@@ -68,4 +100,3 @@ public class ImageUtils {
         return v;
     }
 }
-
