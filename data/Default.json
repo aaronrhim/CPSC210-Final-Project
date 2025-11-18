@@ -1,0 +1,24 @@
+{
+    "stopThreshold": 1.0E-4,
+    "timeElapsed": 0,
+    "path": [{
+        "x": 0,
+        "y": 0
+    }],
+    "maxIterations": 5000,
+    "field": {
+        "zMin": -10,
+        "yMin": -10,
+        "zMax": 10,
+        "expression": "x^2 + y^2",
+        "yMax": 10,
+        "xMax": 10,
+        "xMin": -10
+    },
+    "eps": 0,
+    "learningRate": 0.01,
+    "currentPoint": {
+        "x": 0,
+        "y": 0
+    }
+}

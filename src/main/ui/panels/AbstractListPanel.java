@@ -76,8 +76,7 @@ public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
         return listModel.getListData();
     }
 
-    // EFFECTS: expected that the user defines a means to initialize the editor
-    // panel in this method, and returns it
+    // EFFECTS: expected that the user defines a means to initialize the editor panel in this method, and returns it
     protected abstract JPanel initEditorPanel();
 
     // MODIFIES: this
