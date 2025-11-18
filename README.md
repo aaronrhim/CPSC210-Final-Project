@@ -3,7 +3,7 @@
 ## Project Description  
 
 **What will the application do?**
-This application will allow users to input a k-D function and visualize gradient descent in a k-D space. They will also be able to modify the learning rate and a few other parameters. 
+This application will allow users to input a k-D function and visualize a general gradient descent in a k-D space.
 
 **Who will use it?**
 - Mainly recruiters who are looking at my resume/project portfolio
