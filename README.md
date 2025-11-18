@@ -3,15 +3,15 @@
 ## Project Description  
 
 **What will the application do?**
-This application will be able to classify images (uploaded to a local database by the user).
+This application will allow users to input a k-D function and visualize gradient descent in a k-D space. They will also be able to modify the learning rate and a few other parameters. 
 
 **Who will use it?**
 - Mainly recruiters who are looking at my resume/project portfolio
-- I will use it if I want to refer back to the math in CNN architecture
+- I will use it if I want to visualize some form of polymorphic prediction
 - Students interested in learning more about the math in CNN architecture might use it
 
 **Why is this project of interest to you?**  
-I am interested because it combines my interests in Java programming and artificial intelligence. By implementing the mathematical operations manually (convolution, activation, forward/backward passes), I will deepen my understanding of how models work internally, while also creating a desktop application that can classify images. Whats most concerning for me though is that this might be a waste of time. Since I'm applying to software development roles, spending too much time on this project will not improve my skill in software development. 
+I am interested because it combines my interests in Java programming and artificial intelligence. While previously I wanted to make a larger pipeline (CNN model), I realize that it was a little too ambitious and that I would rather focus on a specific sub-sector such as gradient descent and optimization as well as the visualization aspect. 
 
 **Key elements of the project include:**  
 - Functions for each feature (Conv, Activation frames, hyperparameters, evaluation metrics)
