@@ -68,7 +68,11 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
             handleRenameSave();
         }
         if (actionEvent.getSource() instanceof JButton) {
-            handleButtonPressed((JButton) actionEvent.getSource());
+            try {
+                handleButtonPressed((JButton) actionEvent.getSource());
+            } catch (FileNotFoundException e) {
+                // stubbery
+            }
         }
     }
 
@@ -104,16 +108,17 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
         simState.unlock();
     }
 
-    // EFFECTS: ensure the simulation is paused while writing it to the specified
-    // file location
+    // EFFECTS: ensure the simulation is paused while writing it to the specified file location
     private void handleSaveSimulation(SimulatorState simState, String fileDest) {
         boolean wasRunning = simState.getIsRunning();
         simState.setIsRunning(false);
+
         try {
             SimulationReadWriter.writeSimulation(simState.getSimulation(), fileDest);
-        } catch (Exception exp) {
-            // not much we can do
+        } catch (Exception exp) { 
+            // stub
         }
+
         simState.setIsRunning(wasRunning);
     }
 
