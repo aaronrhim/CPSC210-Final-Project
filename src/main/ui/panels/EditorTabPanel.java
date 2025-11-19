@@ -3,7 +3,7 @@ package ui.panels;
 import ui.Tickable;
 import javax.swing.*;
 
-// Tab panel which is used to cycle through different lists of objects
+// Left tab panel which is used to swap between saved states
 public class EditorTabPanel extends JTabbedPane implements Tickable {
     private static final String FIELD_LIST_NAME = "Scalar Fields";
     private static final String SAVE_LIST_NAME = "Saved Simulations";
