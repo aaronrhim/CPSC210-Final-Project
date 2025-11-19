@@ -17,7 +17,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-// JPanel which contains all the UIs for the saved simulation editor
+// JFrame which contains all the UIs in the secondary saved editor panel
 public class SavedEditorPanel extends JPanel implements ActionListener, Tickable {
     private SavedListPanel parent;
     private JTextField renameField;
@@ -26,7 +26,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
     private JButton newButton;
     private JButton deleteButton;
 
-    // EFFECTS: initializes all UI elements
+    // EFFECTS: Constructor to initialize all UI elements (position, grids, buttons, fields etc)
     public SavedEditorPanel(SavedListPanel parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
@@ -37,6 +37,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new GridBagLayout());
 
+        // need a default to prevent null pointer exceptions and breaking the UI
         renameField = SimulatorUtils.initAndAddPropertyEditField(infoPanel, this, "Save Name:", 0);
 
         loadButton = new JButton("Load");
@@ -59,8 +60,8 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
     }
 
     // MODIFIES: this
-    // EFFECTS: listens to what button/textfield has been pressed and handles the
-    // input accordingly
+    // EFFECTS: uses java.awt to listen to what button/textfield has been pressed and handles
+    // the action accordingly
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == renameField) {
@@ -72,22 +73,17 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
     }
 
     // MODIFIES: this
-    // EFFECTS: handles all button combinations, locks the simulation state as it
-    // directly modifies it
-    private void handleButtonPressed(JButton source) {
+    // EFFECTS: handles all button combinations by locking the simulation mutex as it directly modifies it
+    private void handleButtonPressed(JButton source) throws FileNotFoundException {
         SimulatorState simState = SimulatorState.getInstance();
         String selectedSaveName = parent.swingList.getSelectedValue();
 
-        simState.lock();
+        simState.lock(); // mutex lock to prevent concurrent modification issues
 
         if (source == loadButton) {
             simState.setIsRunning(false);
-            try {
-                Simulation loadedSim = SimulationReadWriter.readSimulation(selectedSaveName);
-                SimulatorUtils.transferSimData(loadedSim, simState.getSimulation());
-            } catch (Exception exp) {
-                // nothing we can really do
-            }
+            Simulation loadedSim = SimulationReadWriter.readSimulation(selectedSaveName);
+            SimulatorUtils.transferSimData(loadedSim, simState.getSimulation());
         }
 
         if (source == saveButton) {
