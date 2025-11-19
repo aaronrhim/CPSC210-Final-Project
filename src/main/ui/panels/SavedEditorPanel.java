@@ -124,7 +124,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
 
     // MODIFIES: this
     // EFFECTS: handles renaming the simulation. renames the simulation if the name
-    // is valid, and the name doesnt already exist
+    // is valid, and the name doesnt already exist (persistance requirements)
     private void handleRenameSave() {
         System.out.println("reached");
         String selectedSaveName = parent.swingList.getSelectedValue();
