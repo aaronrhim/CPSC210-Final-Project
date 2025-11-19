@@ -10,7 +10,7 @@ import javax.swing.*;
 import model.Event;
 import model.EventLog;
 
-// Main window JFrame which is used to house all the graphics
+// MainWindow JFrame which contains all other UI elements
 public class MainWindow extends JFrame implements Tickable {
     public static final double SPLIT_WEIGHT = 0.01f;
 
@@ -26,7 +26,8 @@ public class MainWindow extends JFrame implements Tickable {
         setIconImage(SimulatorUtils.loadImage("icon.png"));
 
         // NOTE:
-        // i'm not happy to implement it this way but oh well
+        // I couldn't find another way to log all events on program exit other than
+        // adding a window listener for the close event with the limited amount of time i have
         addWindowListener(new WindowAdapter() {
             // Adapted from:
             // https://stackoverflow.com/questions/16295942/java-swing-adding-action-listener-for-exit-on-close
