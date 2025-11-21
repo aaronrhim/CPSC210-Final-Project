@@ -5,7 +5,9 @@ import ui.Tickable;
 import java.awt.event.*;
 import java.util.*;
 
-// Virtual camera controller for the 3D viewer
+/*
+    Virtual camera controller for the 3D viewer with movement and rotation controls
+*/
 public class CameraController implements Tickable, KeyListener, MouseListener {
     private static final Vector3 INITIAL_POSITION = new Vector3(0, 0, 30.0f);
 

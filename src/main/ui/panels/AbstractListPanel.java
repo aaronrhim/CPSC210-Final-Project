@@ -13,9 +13,9 @@ public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
     protected JScrollPane listScroller;
     protected JPanel editorPanel;
 
-    // This is simply Swing awfulness. I never intended to write such voodo for this
-    // course, but Java has forced my hand. Thanks Swing. To decipher this
-    // awfulness, please refer to JList and AbstractListModel documentation.
+    // Java Swing is just dumb, particularly the JList model system which requires a separate class called
+    // ListModel thats build into the package. This means if I ever try to update java.util.List through my
+    // threaded tickers, the JList won't know about it unless I tell the ListModel to update itself.
     private class InternalListModel extends AbstractListModel<T> implements Tickable {
         private java.util.List<T> targetListData;
 
@@ -47,7 +47,7 @@ public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
         }
     }
 
-    // EFFECTS: initializes list to be empty and listScroller to contain list and
+    // EFFECTS: initializes list to be empty and listScroller to contain list and 
     // calls on user defined initialization of editorpanel
     public AbstractListPanel(java.util.List<T> listData) {
         setLayout(new BorderLayout());

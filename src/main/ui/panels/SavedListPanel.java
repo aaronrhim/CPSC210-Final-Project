@@ -9,10 +9,9 @@ import persistence.SimulationReadWriter;
 public class SavedListPanel extends AbstractListPanel<String> {
     private SavedEditorPanel savedEditorPanel;
 
-    // EFFECTS: initializes itself to record the list of contents in a new list of
-    // empty strings
+    // EFFECTS: initializes itself to record the list of contents in a new list of empty strings
     public SavedListPanel() {
-        super(new ArrayList<String>());
+        super(new ArrayList<String>()); // with tick updating
     }
 
     // MODIFIES: this
@@ -24,14 +23,12 @@ public class SavedListPanel extends AbstractListPanel<String> {
     }
 
     // MODIFIES: this, super
-    // EFFECTS: updates strings of save filenames
+    // EFFECTS: updates strings of save filenames and saves to ../../data/ directory
     @Override
     public void tick() {
         super.tick();
 
-        // NOTE:
-        // this is a direct rip from ui.legacy.SimulationManager, with some mild
-        // modifications
+        // saves to 
         File saveDir = new File(SimulationReadWriter.SAVE_PATH);
         File[] subFiles = saveDir.listFiles();
 

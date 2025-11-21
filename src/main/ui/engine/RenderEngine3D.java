@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.*;
 
+/*
+    3D render engine for gradient descent simulation visualization
+*/
 public class RenderEngine3D implements Tickable {
 
     public static final float CLIP_Z = -0.1f;
@@ -43,7 +46,7 @@ public class RenderEngine3D implements Tickable {
     private float lastZMin;
     private float lastZMax;
 
-    private static final int COLOR_BG = 0xFF000000;       // black
+    private static final int COLOR_BG = 0xFF000000; // black
 
     private static class LineSegment {
         Vector3 start;
@@ -57,6 +60,7 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
+    // EFFECTS: initializes the 3D render engine with given parent panel and buffer size
     public RenderEngine3D(JPanel parent, int size) {
         this.parent = parent;
         parent.setFocusable(true);
@@ -94,12 +98,12 @@ public class RenderEngine3D implements Tickable {
     }
 
     // ------------------------------------------------------------------------
-    //  PUBLIC DRAW INTERFACE
+    // PUBLIC DRAW INTERFACE
     // ------------------------------------------------------------------------
 
     public void drawCurrentFrame(Graphics g) {
         Rectangle bounds = g.getClipBounds();
-        int imgSize = (int)((float) Math.min(bounds.width, bounds.height) * 0.97f);
+        int imgSize = (int) ((float) Math.min(bounds.width, bounds.height) * 0.97f);
         int offX = (bounds.width - imgSize) / 2;
         int offY = (bounds.height - imgSize) / 2;
 
@@ -125,7 +129,7 @@ public class RenderEngine3D implements Tickable {
     }
 
     // ------------------------------------------------------------------------
-    //  CORE WIREFRAME DRAWING
+    // CORE WIREFRAME DRAWING
     // ------------------------------------------------------------------------
 
     private void drawWireGrid() {
@@ -216,12 +220,17 @@ public class RenderEngine3D implements Tickable {
 
         // Order by depth
         if (a.getZ() > b.getZ()) {
-            Vector3 tmp = a; a = b; b = tmp;
-            Float tmpH = heightA; heightA = heightB; heightB = tmpH;
+            Vector3 tmp = a;
+            a = b;
+            b = tmp;
+            Float tmpH = heightA;
+            heightA = heightB;
+            heightB = tmpH;
         }
 
-        if (a.getZ() >= CLIP_Z && b.getZ() >= CLIP_Z)
+        if (a.getZ() >= CLIP_Z && b.getZ() >= CLIP_Z) {
             return;
+        }
 
         if (b.getZ() >= CLIP_Z) {
             float f = (CLIP_Z - a.getZ()) / (b.getZ() - a.getZ());
@@ -237,7 +246,7 @@ public class RenderEngine3D implements Tickable {
     }
 
     private Vector3 project(Vector3 p) {
-        float x = p.getX() / p.getZ();   // divide by -Z because forward is negative
+        float x = p.getX() / p.getZ(); // divide by -Z because forward is negative
         float y = p.getY() / p.getZ();
 
         x = ((x + 1) * 0.5f) * bufferSize;
@@ -246,13 +255,14 @@ public class RenderEngine3D implements Tickable {
         return new Vector3(x, y, p.getZ());
     }
 
-
     private void draw2DLine(Vector3 a, Vector3 b, Float heightA, Float heightB, Integer overrideColor) {
         // simple Bresenham-style stepper (not pixel-perfect, but fast and clean)
         float dx = b.getX() - a.getX();
         float dy = b.getY() - a.getY();
         int steps = (int) Math.max(Math.abs(dx), Math.abs(dy));
-        if (steps < 1) steps = 1;
+        if (steps < 1) {
+            steps = 1;
+        }
 
         float sx = dx / steps;
         float sy = dy / steps;
@@ -267,7 +277,7 @@ public class RenderEngine3D implements Tickable {
             int color = (overrideColor != null)
                     ? overrideColor
                     : heightToColor(interpolateHeight(heightA, heightB, t));
-            drawPixel((int)x, (int)y, z, color);
+            drawPixel((int) x, (int) y, z, color);
             x += sx;
             y += sy;
             z += dz;
@@ -275,15 +285,18 @@ public class RenderEngine3D implements Tickable {
     }
 
     // ------------------------------------------------------------------------
-    //  FRAMEBUFFER HELPERS
+    // FRAMEBUFFER HELPERS
     // ------------------------------------------------------------------------
 
     private void drawPixel(int x, int y, float z, int color) {
-        if (x < 0 || x >= bufferSize || y < 0 || y >= bufferSize)
+        if (x < 0 || x >= bufferSize || y < 0 || y >= bufferSize) {
             return;
+        }
 
         int idx = x + bufferSize * (bufferSize - 1 - y);
-        if (depthBuffer[idx] >= z) return;
+        if (depthBuffer[idx] >= z) {
+            return;
+        }
 
         depthBuffer[idx] = z;
         colorBuffer[idx] = color;

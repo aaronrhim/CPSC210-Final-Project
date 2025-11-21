@@ -11,49 +11,42 @@ public class Event {
     private Date dateLogged;
     private String description;
 
-    /**
-     * Creates an event with the given description
-     * and the current date/time stamp.
-     * 
-     * @param description a description of the event
-     */
+    // EFFECTS: Creates an event for persistence by recording 
     public Event(String description) {
         dateLogged = Calendar.getInstance().getTime();
         this.description = description;
     }
 
-    /**
-     * Gets the date of this event (includes time).
-     * 
-     * @return the date of the event
-     */
+    // EFFECTS: returns dateLogged
     public Date getDate() {
         return dateLogged;
     }
 
-    /**
-     * Gets the description of this event.
-     * 
-     * @return the description of the event
-     */
+    // EFFECTS: returns description
     public String getDescription() {
         return description;
     }
 
+    // REQUIRES: other has elements and object classes must be equal to each other
+    // MODIFIES: none
+    // EFFECTS: checks if dateLogged and description are both consistent with this
     @Override
     public boolean equals(Object other) {
-        if (other == null)
+        if (other == null) {
             return false;
+        }
 
-        if (other.getClass() != this.getClass())
+        if (other.getClass() != this.getClass()) {
             return false;
+        }
 
         Event otherEvent = (Event) other;
 
-        return (this.dateLogged.equals(otherEvent.dateLogged) &&
-                this.description.equals(otherEvent.description));
+        return (this.dateLogged.equals(otherEvent.dateLogged) 
+                && this.description.equals(otherEvent.description));
     }
 
+    // EFFECTS: 
     @Override
     public int hashCode() {
         return (HASH_CONSTANT * dateLogged.hashCode() + description.hashCode());
