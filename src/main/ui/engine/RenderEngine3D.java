@@ -104,6 +104,7 @@ public class RenderEngine3D implements Tickable {
     // REQUIRES: Graphics which is n^2 square
     // MODIFIES: imageSync locks
     // EFFECTS: updates 60 times a second (Thread set to sleep 16)
+    // NOTE: My "Y" axis is actually my Z axis. Standard in vt
     public void drawCurrentFrame(Graphics g) {
         Rectangle bounds = g.getClipBounds();
         int imgSize = (int) ((float) Math.min(bounds.width, bounds.height) * 0.97f); // looks weird without
@@ -198,9 +199,10 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
-    // Note: Just for visualization purposes
+    // Note: Just for visualization purposes, currently facing problems with vanishing and explo grad
     // REQUIRES: field != null, gd must be computed beforehand (currently done with rand button)
-    // MODIFIES: 
+    // MODIFIES: simState as Simulation
+    // EFFECTS: draw lines connecting points in ArrayList of gradient descent points
     private void drawGradientPath() {
         Simulation simulation = simState.getSimulation();
         ScalarField field = simulation.getField();
@@ -231,11 +233,13 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
+    // MODIFIES: apply vt to arg1 and arg2 into Vector3
+    // EFFECTS: draw in 2D space after vt and rasterization
     private void draw3DLine(Vector3 worldA, Vector3 worldB, Float heightA, Float heightB, Integer overrideColor) {
         Vector3 a = Transform.multiply(viewTransform, worldA);
         Vector3 b = Transform.multiply(viewTransform, worldB);
 
-        // Order by depth
+        // order by depth cause z axis is depth
         if (a.getZ() > b.getZ()) {
             Vector3 tmp = a;
             a = b;
@@ -245,10 +249,11 @@ public class RenderEngine3D implements Tickable {
             heightB = tmpH;
         }
 
-        if (a.getZ() >= CLIP_Z && b.getZ() >= CLIP_Z) {
+        if (a.getZ() >= CLIP_Z && b.getZ() >= CLIP_Z) { // slider border
             return;
         }
 
+        // for z slider reasons
         if (b.getZ() >= CLIP_Z) {
             float f = (CLIP_Z - a.getZ()) / (b.getZ() - a.getZ());
             b = Vector3.add(Vector3.multiply(a, 1 - f), Vector3.multiply(b, f));
@@ -262,8 +267,9 @@ public class RenderEngine3D implements Tickable {
         draw2DLine(p0, p1, heightA, heightB, overrideColor);
     }
 
+    // 
     private Vector3 project(Vector3 p) {
-        float x = p.getX() / p.getZ(); // divide by -Z because forward is negative
+        float x = p.getX() / p.getZ(); // divide by -Z because forward is negative (CHANGED)
         float y = p.getY() / p.getZ();
 
         x = ((x + 1) * 0.5f) * bufferSize;
@@ -272,6 +278,10 @@ public class RenderEngine3D implements Tickable {
         return new Vector3(x, y, p.getZ());
     }
 
+    // REQUIRES: a, b already projected to screen space
+    // MODIFIES: colorBuffer, depthBuffer
+    // EFFECTS: rasterizes a straight line between a and b using a simple linear
+    // stepper; interpolates depth and optional height for coloring; writes pixels through drawPixel
     private void draw2DLine(Vector3 a, Vector3 b, Float heightA, Float heightB, Integer overrideColor) {
         // simple Bresenham-style stepper (not pixel-perfect, but fast and clean)
         float dx = b.getX() - a.getX();
@@ -301,10 +311,9 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
-    // ------------------------------------------------------------------------
-    // FRAMEBUFFER HELPERS
-    // ------------------------------------------------------------------------
-
+    // REQUIRES: 0 <= x,y < bufferSize
+    // MODIFIES: colorBuffer, depthBuffer
+    // EFFECTS: depth-tests the pixel at (x,y); if incoming z is closer, stores z and writes color into colorBuffer
     private void drawPixel(int x, int y, float z, int color) {
         if (x < 0 || x >= bufferSize || y < 0 || y >= bufferSize) {
             return;
@@ -326,6 +335,9 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
+    // MODIFIES: meshGrid, lastFieldUsed, cached domain values, height range
+    // EFFECTS: checks if the ScalarField or its domain changed; if so regenerates the
+    // mesh grid using SurfaceMeshGenerator and updates cached bounds; otherwise leaves the existing mesh untouched
     private void ensureMeshSynced() {
         ScalarField currentField = simState.getSimulation().getField();
         if (currentField == null) {
