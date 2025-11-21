@@ -1,14 +1,14 @@
-# Deep Learning - Custom CNN model functions + application (gui/graphs/button)
+# Submission for CPSC210 final project
 
 ## Project Description  
 
 **What will the application do?**
-This application will allow users to input a k-D function and visualize a general gradient descent in a k-D space.
+This application will allow users to input a scalar field (xy function wrt z) and visualize a general gradient descent algorithm in a 3D space. I implemented a camera controller after taking MATH 200 (Multivariable Calculus) and multithreading (simple concurrency) after taking CPSC 313 (Computer Hardware and Operating Systems).
+
+![alt text](data/image/gd_kd.png)
 
 **Who will use it?**
-- Mainly recruiters who are looking at my resume/project portfolio
-- I will use it if I want to visualize some form of polymorphic prediction
-- Students interested in learning more about the math in CNN architecture might use it
+
 
 **Why is this project of interest to you?**  
 I am interested because it combines my interests in Java programming and artificial intelligence. While previously I wanted to make a larger pipeline (CNN model), I realize that it was a little too ambitious and that I would rather focus on a specific sub-sector such as gradient descent and optimization as well as the visualization aspect. 
