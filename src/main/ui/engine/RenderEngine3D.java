@@ -389,6 +389,9 @@ public class RenderEngine3D implements Tickable {
         return vt;
     }
 
+    // MODIFIES: minHeight, maxHeight
+    // EFFECTS: scans meshGrid for minimum and maximum Y values; normalizes invalid or
+    // degenerate ranges; falls back to field Z-bounds when mesh is empty
     private void computeHeightRangeFromGrid() {
         if (meshGrid == null || meshGrid.length == 0 || meshGrid[0].length == 0) {
             minHeight = 0f;
@@ -453,6 +456,9 @@ public class RenderEngine3D implements Tickable {
         return 0xFF000000 | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
     }
 
+    // MODIFIES: referenceLines
+    // EFFECTS: constructs the static world-space axis lines and grid lines used for
+    // orientation reference in the 3D scene
     private void buildReferenceLines() {
         referenceLines.clear();
         float axisLength = 12f;
