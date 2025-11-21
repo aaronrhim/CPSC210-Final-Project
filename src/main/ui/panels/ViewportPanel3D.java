@@ -158,6 +158,8 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         viewport.repaint();
     }
 
+    // MODIFIES: viewport
+    // EFFECTS: visually signals focus ownership on the rendered panel
     private void updateViewportBorder() {
         if (viewport.isFocusOwner()) {
             viewport.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -166,6 +168,8 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         }
     }
 
+    // MODIFIES: start/stop buttons
+    // EFFECTS: toggles button availability based on simulation state
     private void updateButtonAvailability() {
         Simulation sim = SimulatorState.getInstance().getSimulation();
 
@@ -176,6 +180,8 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         stopButton.setEnabled(hasObjects && isRunning);
     }
 
+    // MODIFIES: sim
+    // EFFECTS: seeds simulation with a random start point and previews a few epochs
     private void handleRandomStartPoint() {
         Simulation sim = SimulatorState.getInstance().getSimulation();
         ScalarField field = sim.getField();

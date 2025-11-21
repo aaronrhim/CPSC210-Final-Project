@@ -65,6 +65,8 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
     }
 
     @Override
+    // MODIFIES: this
+    // EFFECTS: polls time delta, processes input, integrates motion, and updates view transform
     public void tick() {
         long now = System.nanoTime();
         float deltaTime = (now - lastTickNanoseconds) / 1_000_000_000.0f;
@@ -104,6 +106,8 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
         parent.setViewTransform(viewTransform);
     }
 
+    // MODIFIES: this
+    // EFFECTS: applies acceleration/rotation based on current input state
     private void handleInputs(float deltaTime) {
         float accel = ACCELERATION;
         if (keysDown.contains(KeyEvent.VK_SHIFT)) accel *= ACCELERATION_SHIFT_FACTOR;
@@ -141,10 +145,12 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
         }
     }
 
+    // EFFECTS: clamps vector magnitude to given bound
     private static Vector3 clampVector(Vector3 vec, float bound) {
         return vec.magnitude() < bound ? vec : Vector3.multiply(Vector3.normalize(vec), bound);
     }
 
+    // EFFECTS: clamps scalar to +/- maxAbs
     private static float clamp(float val, float maxAbs) {
         return Math.max(Math.min(val, maxAbs), -maxAbs);
     }

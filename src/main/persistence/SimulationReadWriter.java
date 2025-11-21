@@ -54,6 +54,7 @@ public class SimulationReadWriter {
         }
         readScanner.close();
 
+        // NOTE: whole-file read keeps formatting simple before delegating to JsonConverter
         JSONObject jsonSimObject = new JSONObject(jsonStringBuffer);
         return JsonConverter.jsonObjectToSimulation(jsonSimObject);
     }

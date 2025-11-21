@@ -82,6 +82,7 @@ public class SimulatorUtils {
         return (expr.contains("x") || expr.contains("y"));
     }
 
+    // EFFECTS: returns the stored expression placeholder for a scalar field (stub for persistence)
     public static String getStoredExpressionForField(ScalarField field) {
         return "<expr>";
     }
@@ -145,6 +146,7 @@ public class SimulatorUtils {
         return min + RANDOM.nextFloat() * (max - min);
     }
 
+    // EFFECTS: returns gaussian-distributed random float using provided mean/deviation
     public static float randomFloatGaussian(float mean, float deviation) {
         return mean + deviation * (float) RANDOM.nextGaussian();
     }

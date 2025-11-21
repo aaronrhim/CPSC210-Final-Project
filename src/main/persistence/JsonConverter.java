@@ -126,6 +126,7 @@ public class JsonConverter {
         return field;
     }
 
+    // EFFECTS: converts a Vector2 into a single JSON object with x/y keys
     private static JSONObject vector2ToJson(Vector2 vector) {
         JSONObject json = new JSONObject();
         json.put(KEY_VECTOR_X, vector.getX());
@@ -133,6 +134,7 @@ public class JsonConverter {
         return json;
     }
 
+    // EFFECTS: parses a Vector2 from JSON or returns null if payload missing
     private static Vector2 vector2FromJson(JSONObject json) {
         if (json == null) {
             return null;
@@ -142,6 +144,7 @@ public class JsonConverter {
         return new Vector2(x, y);
     }
 
+    // EFFECTS: builds a list of Vector2 objects from a JSON array, ignoring invalid entries
     private static List<Vector2> vector2ListFromJson(JSONArray array) {
         List<Vector2> list = new ArrayList<>();
         if (array == null) {
@@ -156,6 +159,7 @@ public class JsonConverter {
         return list;
     }
 
+    // EFFECTS: creates a ScalarField from an expression string using exp4j
     private static ScalarField createScalarFieldFromExpression(String expr) {
         BiFunction<Float, Float, Float> fn = (Float x, Float y) -> {
             try {

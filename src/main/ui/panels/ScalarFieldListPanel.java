@@ -55,11 +55,15 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
         refresh();
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes field from list if present
     public void removeField(ScalarField field) {
         getListData().remove(field);
         refresh();
     }
 
+    // MODIFIES: this
+    // EFFECTS: swaps an existing field with a new instance if found
     public void replaceField(ScalarField oldField, ScalarField newField) {
         int idx = getListData().indexOf(oldField);
         if (idx != -1) {
@@ -68,10 +72,14 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
         }
     }
 
+    // MODIFIES: swingList
+    // EFFECTS: pushes backing list contents into JList model
     private void refresh() {
         swingList.setListData(getListData().toArray(new ScalarField[0]));
     }
 
+    // MODIFIES: simulation
+    // EFFECTS: syncs selected field with simulation engine and resets start point
     private void handleSelectionChanged() {
         ScalarField selected = getSelectedField();
         if (selected == null) {

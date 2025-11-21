@@ -73,10 +73,13 @@ public class SimulatorState implements Tickable {
         isRunning = val;
     }
 
+    // EFFECTS: returns current simulation timescale factor
     public float getTimeScale() {
         return timeScale;
     }
 
+    // MODIFIES: this
+    // EFFECTS: updates timescale multiplier used during tick integration
     public void setTimeScale(float newTimeScale) {
         timeScale = newTimeScale;
     }
