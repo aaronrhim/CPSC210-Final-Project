@@ -43,6 +43,7 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
     }
 
     // EFFECTS: initializes the control panel and render engine
+    @SuppressWarnings("methodlength")
     public ViewportPanel3D() {
         System.out.println("[DEBUG] ViewportPanel3D created");
         setLayout(new BorderLayout());
@@ -106,6 +107,7 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
     // MODIFIES: this
     // EFFECTS: listens to what JButton/Field/Slider has been interacted with and proceed accordingly
     @Override
+    @SuppressWarnings("methodlength")
     public void actionPerformed(ActionEvent e) {
         SimulatorState.getInstance().lock();
 

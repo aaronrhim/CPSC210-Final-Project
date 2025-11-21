@@ -65,6 +65,7 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
     }
 
     @Override
+    @SuppressWarnings("methodlength")
     // MODIFIES: this
     // EFFECTS: polls time delta, processes input, integrates motion, and updates view transform
     public void tick() {
@@ -80,8 +81,12 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
 
         Transform rotation = Transform.multiply(Transform.rotationX(pitch), Transform.rotationY(yaw));
         float maxVel = MAX_VELOCITY;
-        if (keysDown.contains(KeyEvent.VK_SHIFT)) maxVel *= MAX_VELOCITY_SHIFT_FACTOR;
-        if (keysDown.contains(KeyEvent.VK_CONTROL)) maxVel *= MAX_VELOCITY_CTRL_FACTOR;
+        if (keysDown.contains(KeyEvent.VK_SHIFT)) {
+            maxVel *= MAX_VELOCITY_SHIFT_FACTOR;
+        }
+        if (keysDown.contains(KeyEvent.VK_CONTROL)) {
+            maxVel *= MAX_VELOCITY_CTRL_FACTOR;
+        }
 
         velocity = clampVector(velocity, maxVel);
         velocity = Vector3.multiply(velocity, (float) Math.pow(1.0f - DRAG, deltaTime));
@@ -108,11 +113,15 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
 
     // MODIFIES: this
     // EFFECTS: applies acceleration/rotation based on current input state
+    @SuppressWarnings("methodlength")
     private void handleInputs(float deltaTime) {
         float accel = ACCELERATION;
-        if (keysDown.contains(KeyEvent.VK_SHIFT)) accel *= ACCELERATION_SHIFT_FACTOR;
-        if (keysDown.contains(KeyEvent.VK_CONTROL)) accel *= ACCELERATION_CTRL_FACTOR;
-
+        if (keysDown.contains(KeyEvent.VK_SHIFT)) {
+            accel *= ACCELERATION_SHIFT_FACTOR;
+        }
+        if (keysDown.contains(KeyEvent.VK_CONTROL)) {
+            accel *= ACCELERATION_CTRL_FACTOR;
+        }
         if (keysDown.contains(KeyEvent.VK_W)) {
             velocity = Vector3.add(velocity, new Vector3(0, 0, -accel * deltaTime));
         }
@@ -177,14 +186,22 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) { }
+    public void mousePressed(MouseEvent e) { 
+        // stub
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) { }
+    public void mouseReleased(MouseEvent e) { 
+        // stub
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) { }
+    public void mouseEntered(MouseEvent e) { 
+        // stub
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) { }
+    public void mouseExited(MouseEvent e) { 
+        // stub
+    }
 }

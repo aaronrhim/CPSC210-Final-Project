@@ -142,6 +142,7 @@ public class RenderEngine3D implements Tickable {
     // this method is very convoluted but ima fix it at some point
     // SOURCE: I received a lot of help from my friend who built the OpenGL renderer but also this
     // tutorial really helped: https://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
+    @SuppressWarnings("methodlength")
     private void drawWireGrid() {
         if (meshGrid == null || meshGrid.length == 0 || meshGrid[0].length == 0) {
             return;
@@ -338,6 +339,7 @@ public class RenderEngine3D implements Tickable {
     // MODIFIES: meshGrid, lastFieldUsed, cached domain values, height range
     // EFFECTS: checks if the ScalarField or its domain changed; if so regenerates the
     // mesh grid using SurfaceMeshGenerator and updates cached bounds; otherwise leaves the existing mesh untouched
+    @SuppressWarnings("methodlength")
     private void ensureMeshSynced() {
         ScalarField currentField = simState.getSimulation().getField();
         if (currentField == null) {
@@ -392,6 +394,7 @@ public class RenderEngine3D implements Tickable {
     // MODIFIES: minHeight, maxHeight
     // EFFECTS: scans meshGrid for minimum and maximum Y values; normalizes invalid or
     // degenerate ranges; falls back to field Z-bounds when mesh is empty
+    @SuppressWarnings("methodlength")
     private void computeHeightRangeFromGrid() {
         if (meshGrid == null || meshGrid.length == 0 || meshGrid[0].length == 0) {
             minHeight = 0f;
@@ -459,6 +462,7 @@ public class RenderEngine3D implements Tickable {
     // MODIFIES: referenceLines
     // EFFECTS: constructs the static world-space axis lines and grid lines used for
     // orientation reference in the 3D scene
+    @SuppressWarnings("methodlength")
     private void buildReferenceLines() {
         referenceLines.clear();
         float axisLength = 12f;

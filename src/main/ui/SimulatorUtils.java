@@ -78,7 +78,9 @@ public class SimulatorUtils {
     }
 
     public static boolean checkIfValidExpression(String expr) {
-        if (expr == null || expr.isEmpty()) return false;
+        if (expr == null || expr.isEmpty()) {
+            return false;
+        }
         return (expr.contains("x") || expr.contains("y"));
     }
 

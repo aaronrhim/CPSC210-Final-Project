@@ -109,17 +109,17 @@ public class Transform {
     // EFFECTS: returns the multiplication of two matricies
     public static Transform multiply(Transform left, Transform right) {
         Transform out = new Transform();
-        float[][] A = left.components;
-        float[][] B = right.components;
-        float[][] C = out.components;
+        float[][] leftComponents = left.components;
+        float[][] rightComponents = right.components;
+        float[][] outComponents = out.components;
 
-        for (int r = 0; r < 4; r++) {
-            for (int c = 0; c < 4; c++) {
-                C[r][c] = 
-                    A[r][0] * B[0][c] +
-                    A[r][1] * B[1][c] +
-                    A[r][2] * B[2][c] +
-                    A[r][3] * B[3][c];
+        for (int r = 0; r < ROW_COUNT; r++) {
+            for (int c = 0; c < COL_COUNT; c++) {
+                outComponents[r][c] =
+                        leftComponents[r][0] * rightComponents[0][c]
+                        + leftComponents[r][1] * rightComponents[1][c]
+                        + leftComponents[r][2] * rightComponents[2][c]
+                        + leftComponents[r][3] * rightComponents[3][c];
             }
         }
         return out;
@@ -127,11 +127,20 @@ public class Transform {
 
     // EFFECTS: returns the multiplication of a matricie and a vector
     public static Vector3 multiply(Transform m, Vector3 v) {
-        float[][] M = m.getComponents();
+        float[][] matrix = m.getComponents();
 
-        float x = M[0][0] * v.getX() + M[0][1] * v.getY() + M[0][2] * v.getZ() + M[0][3] * 1.0f;
-        float y = M[1][0] * v.getX() + M[1][1] * v.getY() + M[1][2] * v.getZ() + M[1][3] * 1.0f;
-        float z = M[2][0] * v.getX() + M[2][1] * v.getY() + M[2][2] * v.getZ() + M[2][3] * 1.0f;
+        float x = matrix[0][0] * v.getX()
+                + matrix[0][1] * v.getY()
+                + matrix[0][2] * v.getZ()
+                + matrix[0][3] * 1.0f;
+        float y = matrix[1][0] * v.getX()
+                + matrix[1][1] * v.getY()
+                + matrix[1][2] * v.getZ()
+                + matrix[1][3] * 1.0f;
+        float z = matrix[2][0] * v.getX()
+                + matrix[2][1] * v.getY()
+                + matrix[2][2] * v.getZ()
+                + matrix[2][3] * 1.0f;
 
         return new Vector3(x, y, z);
     }

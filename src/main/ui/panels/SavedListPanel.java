@@ -2,7 +2,7 @@ package ui.panels;
 
 import java.util.*;
 import java.io.File;
-import java.util.List;
+
 import persistence.SimulationReadWriter;
 
 // Contains all the UI elements to represent the current list of saved simulations
@@ -24,6 +24,7 @@ public class SavedListPanel extends AbstractListPanel<String> {
 
     // MODIFIES: this, super
     // EFFECTS: updates strings of save filenames and saves to ../../data/ directory
+    @SuppressWarnings("methodlength")
     @Override
     public void tick() {
         super.tick();

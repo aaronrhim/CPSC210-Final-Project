@@ -38,16 +38,30 @@ public class Simulation {
         return timeElapsed;
     }
 
-    public synchronized float getLearningRate() { return learningRate; }
-    public synchronized float getStopThreshold() { return stopThreshold; }
-    public synchronized int getMaxIterations() { return maxIterations; }
-    public synchronized float getEps() { return eps; }
+    public synchronized float getLearningRate() { 
+        return learningRate; 
+    }
+
+    public synchronized float getStopThreshold() { 
+        return stopThreshold; 
+    }
+
+    public synchronized int getMaxIterations() { 
+        return maxIterations; 
+    }
+
+    public synchronized float getEps() {
+        return eps; 
+    }
+
     public synchronized void setStopThreshold(float newStopThreshold) {
         this.stopThreshold = newStopThreshold;
     }
+
     public synchronized void setMaxIterations(int newMaxIterations) {
         this.maxIterations = newMaxIterations;
     }
+    
     public synchronized void setEps(float newEps) {
         this.eps = newEps;
     }
