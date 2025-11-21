@@ -8,16 +8,17 @@ This application will allow users to input a scalar field (xy function wrt z) an
 ![alt text](data/image/gd_kd.png)
 
 **Who will use it?**
+I mainly created this application as a tool to help students visualize gradient descent in a gamified simulation. 
 
+**Why is this project of interest to you?**
+While taking multivariable calculus, I realized that much of deep learning is just multiple variables with a little twist. Since I took CPSC213 (Computer Systems) over the summer, I also gained a lot of appreciation for DiskIO manipulation and concurrency. For this project, I wanted to compile all my knowledge and apply it into this 3D rendering engine with deep learning visualization. I also gained a lot of inspiration from my friend @NathanielHawron who created a similar but much more complex rendering engine in OpenGL and Vulkan that has modeling capability (something I have been considering to implement in my Java rendering engine).
 
-**Why is this project of interest to you?**  
-I am interested because it combines my interests in Java programming and artificial intelligence. While previously I wanted to make a larger pipeline (CNN model), I realize that it was a little too ambitious and that I would rather focus on a specific sub-sector such as gradient descent and optimization as well as the visualization aspect. 
+This project is part of one of my larger projects which is a gamified Deep Learning bootcamp with highlight on 3D simulations, graphics, for all the operations applied in Deep Learning. Eventually, I will be displaying graphical matrices and how convolution, transformations, etc look like in 3D. 
 
 **Key elements of the project include:**  
-- Functions for each feature (Conv, Activation frames, hyperparameters, evaluation metrics)
-- A thread to add epoch progress to a db (satisfying the saving requirement)
-- Possibly a GUI button that allows a user to upload a picture (which will then be saved into another db)
-- Documentation
+- 3D rendering engine
+    - Vector transformations (3D -> 2D -> projection -> rasterization)
+    - Concurrency locks for 
 
 ---
 
