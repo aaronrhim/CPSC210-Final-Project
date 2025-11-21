@@ -18,19 +18,19 @@ This project is part of one of my larger projects which is a gamified Deep Learn
 **Key elements of the project include:**  
 - 3D rendering engine
     - Vector transformations (3D -> 2D -> projection -> rasterization)
-    - Concurrency locks for 
+    - Concurrency locks for full frame updating
+- Persistance
+    - Saving gradient state (will be used for save/load model state)
+    - Saving minimzer values
+    - simState (which includes field, DL parameters, and time)
+- JPanel and JFrame
+    - A ful GUI implemented with javax.swing where user can modify simulation in real-time (concurrency)
 
 ---
 
 ## User Stories  
-
-- As a user, I want to see how convolution works mathematically with good documentation
-- As a user, I want to see how an activation frame works mathematically with good documentation
-- As a user, I want to see whether or not the model guesses my uploaded image correctly
-- As a user, I want to clone the repo myself and resume training progress from whether it last left off
-- As a user, I want to see a graph on whether or not the accuracy for predicting images is increasing or not
-- As a user, I want to see the effect of convolution on an image that I provide the program with (GUI)
-- As a user, I want to be able to input my own paths to my images for the convolution functions to apply their math to
-- As a user, I want to be able to learn more about the project just by looking through the code and seeing good documentation
-
-Phase1: Successfully completed stories 1, 6, 7, and 8
+- As a user, I want to be able to interact with the simulation environment and move around
+- As a user, I want to be able to modify the simulation in real-time without my computer crashing
+- As a user, I want to be able to visualize scalar fields (which are just multivariable functions wiht a z axis) in the simulation
+- As a user, I want to be able to visualize how gradient descent optimizes a minimizer because I have no idea how to understand it
+- As a user I want to be able to clone the repository and continue off from the saved model state (right now, I only save the minimizer and updated weights/parameters which I really only have one lol which is the minimizer itself)
