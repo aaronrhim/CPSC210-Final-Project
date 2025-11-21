@@ -93,7 +93,7 @@ public class Vector3 {
         if (Math.abs(vector.magnitude()) < EPSILON) {
             return new Vector3(0.0f, 0.0f, 0.0f);
         }
-        return Vector3.multiply(vector, 1.0f / vector.magnitude());
+        return Vector3.multiply(vector, 1.0f / vector.magnitude()); // its unit
     }
 
     // EFFECTS:

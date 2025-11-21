@@ -60,12 +60,15 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
-    // EFFECTS: initializes the 3D render engine with given parent panel and buffer size
+    // REQUIRES: parent != null and size > 0
+    // MODIFIES: this, parent
+    // EFFECTS: initializes the 3D render engine in parent location in JFrame, and grabs sim state
+    // and builds wireframe grid
     public RenderEngine3D(JPanel parent, int size) {
         this.parent = parent;
-        parent.setFocusable(true);
+        parent.setFocusable(true); // keyboard listener
 
-        simState = SimulatorState.getInstance();
+        simState = SimulatorState.getInstance(); // singleton state for concurrency
 
         bufferSize = size;
         depthBuffer = new float[size * size];
@@ -73,7 +76,7 @@ public class RenderEngine3D implements Tickable {
         colorBuffer = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
         imageSync = new ReentrantLock();
 
-        viewTransform = buildDefaultViewTransform();
+        viewTransform = buildDefaultViewTransform(); // 
 
         meshGrid = null;
         referenceLines = new ArrayList<>();
@@ -93,17 +96,17 @@ public class RenderEngine3D implements Tickable {
         return parent;
     }
 
+    // EFFECTS: transforms the vt (worldspace -> x,y,z) to camera-space coordinates -> x,y
     public void setViewTransform(Transform vt) {
         this.viewTransform = vt;
     }
 
-    // ------------------------------------------------------------------------
-    // PUBLIC DRAW INTERFACE
-    // ------------------------------------------------------------------------
-
+    // REQUIRES: Graphics which is n^2 square
+    // MODIFIES: imageSync locks
+    // EFFECTS: updates 60 times a second (Thread set to sleep 16)
     public void drawCurrentFrame(Graphics g) {
         Rectangle bounds = g.getClipBounds();
-        int imgSize = (int) ((float) Math.min(bounds.width, bounds.height) * 0.97f);
+        int imgSize = (int) ((float) Math.min(bounds.width, bounds.height) * 0.97f); // looks weird without
         int offX = (bounds.width - imgSize) / 2;
         int offY = (bounds.height - imgSize) / 2;
 
@@ -112,6 +115,8 @@ public class RenderEngine3D implements Tickable {
         imageSync.unlock();
     }
 
+    // REQUIRES: simState != null annd imageSync to be ready
+    // MODIFIES: simState and imageSync are temporarily locked until frame is ready
     @Override
     public void tick() {
         simState.lock();
@@ -128,10 +133,14 @@ public class RenderEngine3D implements Tickable {
         simState.unlock();
     }
 
-    // ------------------------------------------------------------------------
-    // CORE WIREFRAME DRAWING
-    // ------------------------------------------------------------------------
-
+    // REQUIRES: meshGrid != null, meshGrid.length != 0
+    // MODIFIES: simState
+    // EFFECTS: Creates 3D vectors for x and y (still need to implement z grid but i've already 
+    // tried and it looks bad so idk) depending on grid length (rn set to 10) and then draws them
+    // which converts the 3D vectors into 2D vectors that will display with the viewTransform. Rn
+    // this method is very convoluted but ima fix it at some point
+    // SOURCE: I received a lot of help from my friend who built the OpenGL renderer but also this
+    // tutorial really helped: https://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
     private void drawWireGrid() {
         if (meshGrid == null || meshGrid.length == 0 || meshGrid[0].length == 0) {
             return;
@@ -164,6 +173,10 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
+    // Note: Since all my math is being done in 2D (Scalar Fields -> z = xy), i made this method
+    // to transform my 2D vectors into 3D vectors which then get converted back into 2D vectors
+    // with viewTransform which then gets projected into the JPanel through rasterization (drawPanel)
+    // EFFECTS: returns a Vector3 obj that contains true pixel position on screen
     private Vector3 buildPathVertex(Vector2 point, ScalarField field) {
         try {
             float height = field.evaluate(point.getX(), point.getY());
@@ -171,11 +184,12 @@ public class RenderEngine3D implements Tickable {
                 return null;
             }
 
-            float yRange = field.getYMax() - field.getYMin();
-            if (Math.abs(yRange) < 0.0001f) {
-                yRange = 1.0f;
+            float yrange = field.getYMax() - field.getYMin();
+            if (Math.abs(yrange) < 0.0001f) {
+                yrange = 1.0f;
             }
-            float normalizedDepth = (point.getY() - field.getYMin()) / yRange;
+            // norm to panel size and proj to 2D
+            float normalizedDepth = (point.getY() - field.getYMin()) / yrange; 
             float depth = -5.0f - normalizedDepth * 25.0f;
 
             return new Vector3(point.getX(), height, depth);
@@ -184,6 +198,9 @@ public class RenderEngine3D implements Tickable {
         }
     }
 
+    // Note: Just for visualization purposes
+    // REQUIRES: field != null, gd must be computed beforehand (currently done with rand button)
+    // MODIFIES: 
     private void drawGradientPath() {
         Simulation simulation = simState.getSimulation();
         ScalarField field = simulation.getField();
@@ -191,7 +208,7 @@ public class RenderEngine3D implements Tickable {
             return;
         }
 
-        List<Vector2> pathPoints = simulation.getPath();
+        List<Vector2> pathPoints = simulation.getPath(); // computed beforehand
         if (pathPoints.isEmpty()) {
             return;
         }
