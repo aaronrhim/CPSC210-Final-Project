@@ -16,5 +16,6 @@ public class SimulatorGUITest {
         SimulatorGUI gui = SimulatorGUI.getInstance();
         assertSame(gui, SimulatorGUI.getInstance());
         assertNotNull(gui.getMainWindow());
+        gui.getMainWindow().dispose();
     }
 }
