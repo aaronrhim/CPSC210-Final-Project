@@ -126,21 +126,21 @@ public class Transform {
     }
 
     // EFFECTS: returns the multiplication of a matricie and a vector
-    public static Vector3 multiply(Transform m, Vector3 v) {
-        float[][] matrix = m.getComponents();
+    public static Vector3 multiply(Transform matr, Vector3 v) {
+        float[][] m = matr.getComponents();
 
-        float x = matrix[0][0] * v.getX()
-                + matrix[0][1] * v.getY()
-                + matrix[0][2] * v.getZ()
-                + matrix[0][3] * 1.0f;
-        float y = matrix[1][0] * v.getX()
-                + matrix[1][1] * v.getY()
-                + matrix[1][2] * v.getZ()
-                + matrix[1][3] * 1.0f;
-        float z = matrix[2][0] * v.getX()
-                + matrix[2][1] * v.getY()
-                + matrix[2][2] * v.getZ()
-                + matrix[2][3] * 1.0f;
+        float x = m[0][0] * v.getX()
+                + m[0][1] * v.getY()
+                + m[0][2] * v.getZ()
+                + m[0][3] * 1.0f;
+        float y = m[1][0] * v.getX()
+                + m[1][1] * v.getY()
+                + m[1][2] * v.getZ()
+                + m[1][3] * 1.0f;
+        float z = m[2][0] * v.getX()
+                + m[2][1] * v.getY()
+                + m[2][2] * v.getZ()
+                + m[2][3] * 1.0f;
 
         return new Vector3(x, y, z);
     }

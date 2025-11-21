@@ -116,13 +116,13 @@ public class JsonConverter {
     private static ScalarField scalarFieldFromJson(JSONObject json) {
         String expression = json.getString(KEY_FIELD_EXPRESSION);
         ScalarField field = createScalarFieldFromExpression(expression);
-        float xMin = (float) json.getDouble(KEY_FIELD_XMIN);
-        float xMax = (float) json.getDouble(KEY_FIELD_XMAX);
-        float yMin = (float) json.getDouble(KEY_FIELD_YMIN);
-        float yMax = (float) json.getDouble(KEY_FIELD_YMAX);
-        float zMin = (float) json.getDouble(KEY_FIELD_ZMIN);
-        float zMax = (float) json.getDouble(KEY_FIELD_ZMAX);
-        field.setDomain(xMin, xMax, yMin, yMax, zMin, zMax);
+        float xmin = (float) json.getDouble(KEY_FIELD_XMIN);
+        float xmax = (float) json.getDouble(KEY_FIELD_XMAX);
+        float ymin = (float) json.getDouble(KEY_FIELD_YMIN);
+        float ymax = (float) json.getDouble(KEY_FIELD_YMAX);
+        float zmin = (float) json.getDouble(KEY_FIELD_ZMIN);
+        float zmax = (float) json.getDouble(KEY_FIELD_ZMAX);
+        field.setDomain(xmin, xmax, ymin, ymax, zmin, zmax);
         return field;
     }
 
