@@ -8,7 +8,7 @@ import java.awt.GraphicsEnvironment;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
-public class SimulatorGUItest {
+public class SimulatorGuiTest {
 
     @Test
     void testGetInstance() {
