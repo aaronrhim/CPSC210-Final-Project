@@ -8,6 +8,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
 
+/*
+    JPanel editing field to input functions and modify axes with sliders
+*/
 public class ScalarFieldEditorPanel extends JPanel implements ActionListener, ChangeListener, Tickable {
 
     private static final int DOMAIN_SLIDER_MIN = -30;
