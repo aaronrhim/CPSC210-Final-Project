@@ -107,6 +107,9 @@ public class RenderEngine3D implements Tickable {
     // NOTE: My "Y" axis is actually my Z axis. Standard in vt
     public void drawCurrentFrame(Graphics g) {
         Rectangle bounds = g.getClipBounds();
+        // if (bounds == null) { // only uncomment for testing but its really not recommended
+        //     bounds = new Rectangle(parent.getWidth(), parent.getHeight());
+        // }
         int imgSize = (int) ((float) Math.min(bounds.width, bounds.height) * 0.97f); // looks weird without
         int offX = (bounds.width - imgSize) / 2;
         int offY = (bounds.height - imgSize) / 2;

@@ -11,7 +11,7 @@ public class SavedListPanel extends AbstractListPanel<String> {
 
     // EFFECTS: initializes itself to record the list of contents in a new list of empty strings
     public SavedListPanel() {
-        super(new ArrayList<String>()); // with tick updating
+        super(new ArrayList<String>());
     }
 
     // MODIFIES: this

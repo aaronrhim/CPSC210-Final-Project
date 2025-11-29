@@ -6,9 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class RenderEngine3DTest {
+
+    @BeforeAll
+    static void enableHeadlessMode() {
+        System.setProperty("java.awt.headless", "true");
+    }
 
     @Test
     void testTickAndDraw() {
