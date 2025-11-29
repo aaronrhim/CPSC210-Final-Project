@@ -24,19 +24,23 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
     private JButton removeFieldButton;
 
     private JSlider learningRateSlider;
-    private JSlider xMinSlider;
-    private JSlider xMaxSlider;
-    private JSlider yMinSlider;
-    private JSlider yMaxSlider;
-    private JSlider zMinSlider;
-    private JSlider zMaxSlider;
-    private JLabel xBoundsSummary;
-    private JLabel yBoundsSummary;
-    private JLabel zBoundsSummary;
+    private JSlider xxMinSlider;
+    private JSlider xxMaxSlider;
+    private JSlider yyMinSlider;
+    private JSlider yyMaxSlider;
+    private JSlider zzMinSlider;
+    private JSlider zzMaxSlider;
+    private JLabel xxBoundsSummary;
+    private JLabel yyBoundsSummary;
+    private JLabel zzBoundsSummary;
 
     private boolean updatingDomainControls;
     private ScalarField lastSelectedField;
 
+    // REQUIRES: parent not null
+    // MODIFIES: this
+    // EFFECTS: builds UI controls for editing scalar fields and wires listeners
+    @SuppressWarnings("methodlength")
     public ScalarFieldEditorPanel(ScalarFieldListPanel parent) {
         super(new BorderLayout());
         this.parent = parent;
@@ -72,42 +76,44 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         // Domain sliders
         infoPanel.add(new JLabel("Domain Bounds"), SimulatorUtils.makeGbConstraints(0, 6, 3));
 
-        xMinSlider = buildDomainSlider(-10);
-        xMaxSlider = buildDomainSlider(10);
-        yMinSlider = buildDomainSlider(-10);
-        yMaxSlider = buildDomainSlider(10);
-        zMinSlider = buildDomainSlider(-10);
-        zMaxSlider = buildDomainSlider(10);
+        xxMinSlider = buildDomainSlider(-10);
+        xxMaxSlider = buildDomainSlider(10);
+        yyMinSlider = buildDomainSlider(-10);
+        yyMaxSlider = buildDomainSlider(10);
+        zzMinSlider = buildDomainSlider(-10);
+        zzMaxSlider = buildDomainSlider(10);
 
         infoPanel.add(new JLabel("X Min:"), SimulatorUtils.makeGbConstraints(0, 7, 1));
-        infoPanel.add(xMinSlider, SimulatorUtils.makeGbConstraints(1, 7, 2));
+        infoPanel.add(xxMinSlider, SimulatorUtils.makeGbConstraints(1, 7, 2));
 
         infoPanel.add(new JLabel("X Max:"), SimulatorUtils.makeGbConstraints(0, 8, 1));
-        infoPanel.add(xMaxSlider, SimulatorUtils.makeGbConstraints(1, 8, 2));
+        infoPanel.add(xxMaxSlider, SimulatorUtils.makeGbConstraints(1, 8, 2));
 
         infoPanel.add(new JLabel("Y Min:"), SimulatorUtils.makeGbConstraints(0, 9, 1));
-        infoPanel.add(yMinSlider, SimulatorUtils.makeGbConstraints(1, 9, 2));
+        infoPanel.add(yyMinSlider, SimulatorUtils.makeGbConstraints(1, 9, 2));
 
         infoPanel.add(new JLabel("Y Max:"), SimulatorUtils.makeGbConstraints(0, 10, 1));
-        infoPanel.add(yMaxSlider, SimulatorUtils.makeGbConstraints(1, 10, 2));
+        infoPanel.add(yyMaxSlider, SimulatorUtils.makeGbConstraints(1, 10, 2));
 
         infoPanel.add(new JLabel("Z Min:"), SimulatorUtils.makeGbConstraints(0, 11, 1));
-        infoPanel.add(zMinSlider, SimulatorUtils.makeGbConstraints(1, 11, 2));
+        infoPanel.add(zzMinSlider, SimulatorUtils.makeGbConstraints(1, 11, 2));
 
         infoPanel.add(new JLabel("Z Max:"), SimulatorUtils.makeGbConstraints(0, 12, 1));
-        infoPanel.add(zMaxSlider, SimulatorUtils.makeGbConstraints(1, 12, 2));
+        infoPanel.add(zzMaxSlider, SimulatorUtils.makeGbConstraints(1, 12, 2));
 
-        xBoundsSummary = new JLabel("X Bounds: —");
-        yBoundsSummary = new JLabel("Y Bounds: —");
-        zBoundsSummary = new JLabel("Z Bounds: —");
-        infoPanel.add(xBoundsSummary, SimulatorUtils.makeGbConstraints(0, 13, 3));
-        infoPanel.add(yBoundsSummary, SimulatorUtils.makeGbConstraints(0, 14, 3));
-        infoPanel.add(zBoundsSummary, SimulatorUtils.makeGbConstraints(0, 15, 3));
+        xxBoundsSummary = new JLabel("X Bounds: —");
+        yyBoundsSummary = new JLabel("Y Bounds: —");
+        zzBoundsSummary = new JLabel("Z Bounds: —");
+        infoPanel.add(xxBoundsSummary, SimulatorUtils.makeGbConstraints(0, 13, 3));
+        infoPanel.add(yyBoundsSummary, SimulatorUtils.makeGbConstraints(0, 14, 3));
+        infoPanel.add(zzBoundsSummary, SimulatorUtils.makeGbConstraints(0, 15, 3));
 
         add(infoPanel, BorderLayout.CENTER);
     }
 
-    // action events
+    // REQUIRES: event source is one of the registered controls
+    // MODIFIES: SimulatorState (locks/unlocks), selected ScalarField, UI controls
+    // EFFECTS: routes button/text actions to the appropriate handlers
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
@@ -129,14 +135,20 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         SimulatorState.getInstance().unlock();
     }
 
-    // When user presses Enter inside the expression box
+    // REQUIRES: fieldSrc not null and contains valid text input
+    // MODIFIES: selected ScalarField, SimulatorState simulation field, parent list
+    // EFFECTS: parses the expression in the text field and replaces the selected field with new one
     private void handleTextFieldSubmit(JTextField fieldSrc) {
 
         ScalarField selected = getSelectedField();
-        if (selected == null) return;
+        if (selected == null) {
+            return;
+        }
 
         String expr = fieldSrc.getText().trim();
-        if (!SimulatorUtils.checkIfValidExpression(expr)) return;
+        if (!SimulatorUtils.checkIfValidExpression(expr)) {
+            return;
+        }
 
         System.out.println("[DEBUG] Parsing expression...");
         ScalarField newField = null;
@@ -153,7 +165,10 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         SimulatorState.getInstance().getSimulation().setField(newField);
     }
 
-    // Add/remove field buttons
+    // REQUIRES: buttonSrc is addFieldButton or removeFieldButton
+    // MODIFIES: parent list contents, SimulatorState simulation field/initial point
+    // EFFECTS: adds a new field from expression or removes the selected field
+    @SuppressWarnings("methodlength")
     private void handleButtonPressed(JButton buttonSrc) {
 
         if (buttonSrc == addFieldButton) {
@@ -164,7 +179,9 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
             String expr = fieldExpressionInput.getText().trim();
             System.out.println("[DEBUG] User typed expression: '" + expr + "'");
 
-            if (!SimulatorUtils.checkIfValidExpression(expr)) return;
+            if (!SimulatorUtils.checkIfValidExpression(expr)) {
+                return;
+            }
 
             ScalarField newField = SimulatorUtils.createScalarFieldFromExpression(expr);
 
@@ -181,13 +198,15 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
             sim.setField(newField);
 
             // IMPORTANT FIX: automatically choose a sensible initial point
-            sim.setInitialPoint(0f, 0f);   // or any center point of your domain
+            sim.setInitialPoint(0f, 0f); // or any center point of your domain
         }
 
         if (buttonSrc == removeFieldButton) {
 
             ScalarField selected = getSelectedField();
-            if (selected == null) return;
+            if (selected == null) {
+                return;
+            }
 
             parent.removeField(selected);
 
@@ -196,12 +215,15 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
             }
 
             int size = parent.getSwingList().getModel().getSize();
-            if (size > 0)
+            if (size > 0) {
                 parent.getSwingList().setSelectedIndex(size - 1);
+            }
         }
     }
 
-    // sliders
+    // REQUIRES: e source is learning rate or domain sliders
+    // MODIFIES: SimulatorState learning rate or selected ScalarField domain
+    // EFFECTS: updates learning rate or domain bounds based on slider movement
     @Override
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == learningRateSlider) {
@@ -211,13 +233,15 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         }
 
         Object src = e.getSource();
-        if (src == xMinSlider || src == xMaxSlider || 
-            src == yMinSlider || src == yMaxSlider ||
-            src == zMinSlider || src == zMaxSlider) {
+        if (src == xxMinSlider || src == xxMaxSlider || src == yyMinSlider || src == yyMaxSlider 
+                        || src == zzMinSlider || src == zzMaxSlider) {
             handleDomainSliderChanged((JSlider) src);
         }
     }
 
+    // REQUIRES: SimulatorState singleton initialized
+    // MODIFIES: UI controls (enabled/disabled), domain slider positions
+    // EFFECTS: syncs panel editability and slider values with current selection/state
     @Override
     public void tick() {
         SimulatorState simState = SimulatorState.getInstance();
@@ -227,7 +251,9 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         syncDomainControls(selected, simState);
     }
 
-    // Enable/disable editing correctly
+    // REQUIRES: simState not null
+    // MODIFIES: fieldExpressionInput, addFieldButton, removeFieldButton
+    // EFFECTS: enables or disables editing controls based on run state and selection
     private void handleShouldPanelsBeEditable(SimulatorState simState, ScalarField selected) {
 
         boolean isNotRunning = !simState.getIsRunning();
@@ -240,10 +266,14 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
     // ---------------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------------
+    // EFFECTS: returns the currently selected ScalarField in the list (may be null)
     private ScalarField getSelectedField() {
         return parent.getSwingList().getSelectedValue();
     }
 
+    // REQUIRES: initialValue within slider bounds
+    // MODIFIES: none
+    // EFFECTS: constructs a standard domain slider with ticks and listener
     private JSlider buildDomainSlider(int initialValue) {
         JSlider slider = new JSlider(DOMAIN_SLIDER_MIN, DOMAIN_SLIDER_MAX, initialValue);
         slider.setMajorTickSpacing(10);
@@ -254,6 +284,9 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         return slider;
     }
 
+    // REQUIRES: source is one of the domain sliders
+    // MODIFIES: selected ScalarField domain, domain summary labels
+    // EFFECTS: clamps/updates domain sliders and writes domain back to field
     private void handleDomainSliderChanged(JSlider source) {
         if (updatingDomainControls) {
             return;
@@ -266,53 +299,59 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
 
         ensureSliderOrdering(source);
 
-        float xMin = xMinSlider.getValue();
-        float xMax = xMaxSlider.getValue();
-        float yMin = yMinSlider.getValue();
-        float yMax = yMaxSlider.getValue();
-        float zMin = zMinSlider.getValue();
-        float zMax = zMaxSlider.getValue();
+        float xxMin = xxMinSlider.getValue();
+        float xxMax = xxMaxSlider.getValue();
+        float yyMin = yyMinSlider.getValue();
+        float yyMax = yyMaxSlider.getValue();
+        float zzMin = zzMinSlider.getValue();
+        float zzMax = zzMaxSlider.getValue();
 
-        selected.setDomain(xMin, xMax, yMin, yMax, zMin, zMax);
-        updateDomainSummaryLabels(xMin, xMax, yMin, yMax, zMin, zMax);
+        selected.setDomain(xxMin, xxMax, yyMin, yyMax, zzMin, zzMax);
+        updateDomainSummaryLabels(xxMin, xxMax, yyMin, yyMax, zzMin, zzMax);
     }
 
+    // REQUIRES: changedSlider is a domain slider
+    // MODIFIES: domain sliders
+    // EFFECTS: enforces min<max ordering with a small gap on all axes
     private void ensureSliderOrdering(JSlider changedSlider) {
-        if (xMinSlider.getValue() >= xMaxSlider.getValue()) {
-            if (changedSlider == xMinSlider) {
-                xMaxSlider.setValue(xMinSlider.getValue() + DOMAIN_MIN_GAP);
+        if (xxMinSlider.getValue() >= xxMaxSlider.getValue()) {
+            if (changedSlider == xxMinSlider) {
+                xxMaxSlider.setValue(xxMinSlider.getValue() + DOMAIN_MIN_GAP);
             } else {
-                xMinSlider.setValue(xMaxSlider.getValue() - DOMAIN_MIN_GAP);
+                xxMinSlider.setValue(xxMaxSlider.getValue() - DOMAIN_MIN_GAP);
             }
         }
 
-        if (yMinSlider.getValue() >= yMaxSlider.getValue()) {
-            if (changedSlider == yMinSlider) {
-                yMaxSlider.setValue(yMinSlider.getValue() + DOMAIN_MIN_GAP);
+        if (yyMinSlider.getValue() >= yyMaxSlider.getValue()) {
+            if (changedSlider == yyMinSlider) {
+                yyMaxSlider.setValue(yyMinSlider.getValue() + DOMAIN_MIN_GAP);
             } else {
-                yMinSlider.setValue(yMaxSlider.getValue() - DOMAIN_MIN_GAP);
+                yyMinSlider.setValue(yyMaxSlider.getValue() - DOMAIN_MIN_GAP);
             }
         }
 
-        if (zMinSlider.getValue() >= zMaxSlider.getValue()) {
-            if (changedSlider == zMinSlider) {
-                zMaxSlider.setValue(zMinSlider.getValue() + DOMAIN_MIN_GAP);
+        if (zzMinSlider.getValue() >= zzMaxSlider.getValue()) {
+            if (changedSlider == zzMinSlider) {
+                zzMaxSlider.setValue(zzMinSlider.getValue() + DOMAIN_MIN_GAP);
             } else {
-                zMinSlider.setValue(zMaxSlider.getValue() - DOMAIN_MIN_GAP);
+                zzMinSlider.setValue(zzMaxSlider.getValue() - DOMAIN_MIN_GAP);
             }
         }
     }
 
+    // REQUIRES: simState not null
+    // MODIFIES: domain sliders enabled state, labels, lastSelectedField
+    // EFFECTS: disables sliders when no selection or running; syncs sliders to selected field once
     private void syncDomainControls(ScalarField selected, SimulatorState simState) {
         boolean hasSelection = (selected != null);
         boolean canEdit = hasSelection && !simState.getIsRunning();
 
-        xMinSlider.setEnabled(canEdit);
-        xMaxSlider.setEnabled(canEdit);
-        yMinSlider.setEnabled(canEdit);
-        yMaxSlider.setEnabled(canEdit);
-        zMinSlider.setEnabled(canEdit);
-        zMaxSlider.setEnabled(canEdit);
+        xxMinSlider.setEnabled(canEdit);
+        xxMaxSlider.setEnabled(canEdit);
+        yyMinSlider.setEnabled(canEdit);
+        yyMaxSlider.setEnabled(canEdit);
+        zzMinSlider.setEnabled(canEdit);
+        zzMaxSlider.setEnabled(canEdit);
 
         if (!hasSelection) {
             updateDomainSummaryLabels(null, null, null, null, null, null);
@@ -326,19 +365,24 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         }
     }
 
+    // REQUIRES: field not null
+    // MODIFIES: domain sliders, summary labels
+    // EFFECTS: sets slider positions from the field's domain values
     private void setSlidersFromField(ScalarField field) {
         updatingDomainControls = true;
-        xMinSlider.setValue(clampToSliderRange(field.getXMin()));
-        xMaxSlider.setValue(clampToSliderRange(field.getXMax()));
-        yMinSlider.setValue(clampToSliderRange(field.getYMin()));
-        yMaxSlider.setValue(clampToSliderRange(field.getYMax()));
-        zMinSlider.setValue(clampToSliderRange(field.getZMin()));
-        zMaxSlider.setValue(clampToSliderRange(field.getZMax()));
+        xxMinSlider.setValue(clampToSliderRange(field.getXMin()));
+        xxMaxSlider.setValue(clampToSliderRange(field.getXMax()));
+        yyMinSlider.setValue(clampToSliderRange(field.getYMin()));
+        yyMaxSlider.setValue(clampToSliderRange(field.getYMax()));
+        zzMinSlider.setValue(clampToSliderRange(field.getZMin()));
+        zzMaxSlider.setValue(clampToSliderRange(field.getZMax()));
         updatingDomainControls = false;
         updateDomainSummaryLabels(field.getXMin(), field.getXMax(),
                 field.getYMin(), field.getYMax(), field.getZMin(), field.getZMax());
     }
 
+    // REQUIRES: value is finite
+    // EFFECTS: returns value clamped to slider bounds, rounded to int
     private int clampToSliderRange(float value) {
         int rounded = Math.round(value);
         if (rounded < DOMAIN_SLIDER_MIN) {
@@ -350,23 +394,25 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         return rounded;
     }
 
-    private void updateDomainSummaryLabels(Float xMin, Float xMax, Float yMin, Float yMax, Float zMin, Float zMax) {
-        if (xMin == null || xMax == null) {
-            xBoundsSummary.setText("X Bounds: —");
+    // EFFECTS: updates bounds summary labels with provided domain values; shows dash when null
+    private void updateDomainSummaryLabels(Float xxMin, Float xxMax, Float yyMin, Float yyMax, 
+                                           Float zzMin, Float zzMax) {
+        if (xxMin == null || xxMax == null) {
+            xxBoundsSummary.setText("X Bounds: —");
         } else {
-            xBoundsSummary.setText(String.format("X Bounds: %.1f to %.1f", xMin, xMax));
+            xxBoundsSummary.setText(String.format("X Bounds: %.1f to %.1f", xxMin, xxMax));
         }
 
-        if (yMin == null || yMax == null) {
-            yBoundsSummary.setText("Y Bounds: —");
+        if (yyMin == null || yyMax == null) {
+            yyBoundsSummary.setText("Y Bounds: —");
         } else {
-            yBoundsSummary.setText(String.format("Y Bounds: %.1f to %.1f", yMin, yMax));
+            yyBoundsSummary.setText(String.format("Y Bounds: %.1f to %.1f", yyMin, yyMax));
         }
 
-        if (zMin == null || zMax == null) {
-            zBoundsSummary.setText("Z Bounds: —");
+        if (zzMin == null || zzMax == null) {
+            zzBoundsSummary.setText("Z Bounds: —");
         } else {
-            zBoundsSummary.setText(String.format("Z Bounds: %.1f to %.1f", zMin, zMax));
+            zzBoundsSummary.setText(String.format("Z Bounds: %.1f to %.1f", zzMin, zzMax));
         }
     }
 
