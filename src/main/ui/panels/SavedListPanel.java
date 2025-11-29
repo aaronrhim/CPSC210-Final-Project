@@ -29,12 +29,9 @@ public class SavedListPanel extends AbstractListPanel<String> {
     public void tick() {
         super.tick();
 
-        // saves to 
         File saveDir = new File(SimulationReadWriter.SAVE_PATH);
         File[] subFiles = saveDir.listFiles();
 
-        // NOTE:
-        // this is a simply horrible way of doing this but oh well
         List<String> newFileNames = new ArrayList<String>(subFiles.length);
         for (File subFile : subFiles) {
             if (subFile.isDirectory() || !subFile.getName().endsWith(SimulationReadWriter.FILE_SUFFIX)) {
@@ -48,9 +45,7 @@ public class SavedListPanel extends AbstractListPanel<String> {
 
         List<String> savedSimOptions = super.getListData();
 
-        // remove everything thats gone
-        // NOTE: this must be done in two passes as you cant remove element while
-        // iterating over the colection
+        // Note: You need remove things twice cause some things continue to exist after first pass
         List<String> toRemove = new ArrayList<String>(savedSimOptions.size());
         for (String oldFileName : savedSimOptions) {
             if (!newFileNames.contains(oldFileName)) {
