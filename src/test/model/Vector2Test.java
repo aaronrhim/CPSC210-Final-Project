@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.exceptions.NonMatchingClassException;
 import org.junit.jupiter.api.Test;
 
+@ExcludeFromJacocoGeneratedReport
 public class Vector2Test {
 
     @Test

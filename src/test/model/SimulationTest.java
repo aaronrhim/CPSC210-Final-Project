@@ -9,9 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.exceptions.ArgumentOutOfBoundsException;
 import org.junit.jupiter.api.Test;
 
+@ExcludeFromJacocoGeneratedReport
 public class SimulationTest {
 
     private ScalarField makeField() {

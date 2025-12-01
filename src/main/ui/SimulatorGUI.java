@@ -1,10 +1,14 @@
 package ui;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.*;
 import ui.panels.*;
 import java.awt.*;
 
-// Contains all the rendering-related data for the Swing-based GUI
+/**
+ * Contains all the rendering-related data for the Swing-based GUI.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class SimulatorGUI implements Tickable {
     private static SimulatorGUI instance;
 

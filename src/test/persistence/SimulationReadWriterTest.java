@@ -3,6 +3,7 @@ package persistence;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import java.io.File;
 import java.io.IOException;
 
@@ -11,6 +12,7 @@ import model.Simulation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+@ExcludeFromJacocoGeneratedReport
 public class SimulationReadWriterTest {
 
     private File lastFile;

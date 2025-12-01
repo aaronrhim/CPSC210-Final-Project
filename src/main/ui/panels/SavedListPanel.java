@@ -1,11 +1,15 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import java.util.*;
 import java.io.File;
 
 import persistence.SimulationReadWriter;
 
-// Contains all the UI elements to represent the current list of saved simulations
+/**
+ * Contains all the UI elements to represent the current list of saved simulations.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class SavedListPanel extends AbstractListPanel<String> {
     private SavedEditorPanel savedEditorPanel;
 

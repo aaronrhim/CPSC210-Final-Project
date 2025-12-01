@@ -1,5 +1,6 @@
 package ui.engine;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import ui.*;
 import model.*;
 
@@ -10,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.*;
 
-/*
-    3D render engine for gradient descent simulation visualization
-*/
+/**
+ * 3D render engine for gradient descent simulation visualization.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class RenderEngine3D implements Tickable {
 
     public static final float CLIP_Z = -0.1f;

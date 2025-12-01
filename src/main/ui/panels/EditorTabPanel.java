@@ -1,9 +1,13 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import ui.Tickable;
 import javax.swing.*;
 
-// Left tab panel which is used to swap between saved sim states
+/**
+ * Left tab panel which is used to swap between saved sim states.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class EditorTabPanel extends JTabbedPane implements Tickable {
     private static final String FIELD_LIST_NAME = "Scalar Fields";
     private static final String SAVE_LIST_NAME = "Saved Simulations";

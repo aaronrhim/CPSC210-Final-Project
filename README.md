@@ -34,3 +34,14 @@ This project is part of one of my larger projects which is a gamified Deep Learn
 - As a user, I want to be able to visualize scalar fields (which are just multivariable functions wiht a z axis) in the simulation
 - As a user, I want to be able to visualize how gradient descent optimizes a minimizer because I have no idea how to understand it
 - As a user I want to be able to clone the repository and continue off from the saved model state (right now, I only save the minimizer and updated weights/parameters which I really only have one lol which is the minimizer itself)
+- As a user, I want the option to save the entire simulation state (fields, parameters, and path) to a chosen file when I decide to.
+- As a user, I want the option to load that saved simulation state from a chosen file so I can resume exactly where I left off.
+
+# Instructions for End User
+
+- You can view the panel that displays the scalar fields that have already been added to the list by opening the "Scalar Fields" tab in the left Editor panel.
+- You can generate the first required action related to the user story "adding multiple Xs to a Y" by entering a new scalar field expression and clicking the "Add Field" button in the Scalar Field editor.
+- You can generate the second required action related to the user story "adding multiple Xs to a Y" by selecting a scalar field in the list and using the "Remove Field" button to prune the list to a subset.
+- You can locate my visual component by looking at the main 3D viewport on the right, which renders the scalar field surface and gradient descent path.
+- You can save the state of my application by selecting a save name in the "Saved Simulations" tab and clicking the "Save" button in the Save editor.
+- You can reload the state of my application by selecting a saved entry in the "Saved Simulations" tab and clicking the "Load" button in the Save editor.

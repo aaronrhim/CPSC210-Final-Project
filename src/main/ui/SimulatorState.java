@@ -1,12 +1,16 @@
 package ui;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.*;
 
-// Contains all simulation state related data
+/**
+ * Contains all simulation state related data.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class SimulatorState implements Tickable {
     public static final float TIMESCALE_MIN = 1.0f;
     public static final float TIMESCALE_MAX = 20.0f;

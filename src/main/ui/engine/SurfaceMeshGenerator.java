@@ -1,8 +1,13 @@
 package ui.engine;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.Vector3;
 import model.ScalarField;
 
+/**
+ * Utility for sampling scalar fields into surface meshes for rendering.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class SurfaceMeshGenerator {
 
     // EFFECTS: samples the scalar field over the given domain and returns a grid of vertices

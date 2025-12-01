@@ -1,5 +1,6 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -10,7 +11,10 @@ import javax.swing.*;
 import model.Event;
 import model.EventLog;
 
-// MainWindow JFrame which contains all other UI elements
+/**
+ * MainWindow JFrame which contains all other UI elements.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class MainWindow extends JFrame implements Tickable {
     public static final double SPLIT_WEIGHT = 0.01f;
 

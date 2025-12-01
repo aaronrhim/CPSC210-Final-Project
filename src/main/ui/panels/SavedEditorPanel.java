@@ -1,5 +1,6 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import persistence.SimulationReadWriter;
 import ui.SimulatorState;
 import ui.SimulatorUtils;
@@ -17,7 +18,10 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-// JFrame which contains all the UIs in the secondary saved editor panel
+/**
+ * JPanel container for the secondary saved editor panel.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class SavedEditorPanel extends JPanel implements ActionListener, Tickable {
     private SavedListPanel parent;
     private JTextField renameField;

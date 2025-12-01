@@ -1,10 +1,14 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import java.awt.*;
 import ui.Tickable;
 import javax.swing.*;
 
-// Abstract List panel which is used to view and edit elements in a list
+/**
+ * Abstract list panel used to view and edit elements in a list.
+ */
+@ExcludeFromJacocoGeneratedReport
 public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
     public static final double SPLIT_WEIGHT = 0.9;
 
@@ -16,6 +20,7 @@ public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
     // Java Swing is just dumb, particularly the JList model system which requires a separate class called
     // ListModel thats build into the package. This means if I ever try to update java.util.List through my
     // threaded tickers, the JList won't know about it unless I tell the ListModel to update itself.
+    @ExcludeFromJacocoGeneratedReport
     private class InternalListModel extends AbstractListModel<T> implements Tickable {
         private java.util.List<T> targetListData;
 

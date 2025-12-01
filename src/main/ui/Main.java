@@ -1,6 +1,11 @@
 package ui;
 
-// Holds the entry point 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
+
+/**
+ * Entry point that constructs the simulation state and UI, then drives the tick loop.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class Main {
     // EFFECTS: constructs a simulation state and UI, then updates them forever
     public static void main(String[] args) throws Exception {

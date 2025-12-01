@@ -1,5 +1,6 @@
 package ui;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.*;
 
 import java.awt.*;
@@ -16,7 +17,10 @@ import java.awt.event.ActionListener;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-// Miscellaneous parsing, math, and UI methods for the gradient-descent GUI
+/**
+ * Miscellaneous parsing, math, and UI methods for the gradient-descent GUI.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class SimulatorUtils {
 
     private static final int EDIT_FIELD_COLUMNS = 20;

@@ -128,7 +128,6 @@ public class Simulation {
     // EFFECTS: sets the scalar field to be optimized and clears existing data
     public synchronized void setField(ScalarField newField) {
         if (newField == null) {
-            System.out.println("[DEBUG][ERROR] Tried to set null field in Simulation!");
             return;
         }
         this.field = newField;

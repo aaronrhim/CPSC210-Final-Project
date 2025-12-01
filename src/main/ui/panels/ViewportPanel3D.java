@@ -1,5 +1,6 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import ui.*;
 import model.*;
 import ui.engine.CameraController;
@@ -9,7 +10,10 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-// Viewport panel for rendering the 3D scalar field
+/**
+ * Viewport panel for rendering the 3D scalar field.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class ViewportPanel3D extends JPanel implements ActionListener, Tickable {
 
     private static final float SPLIT_WEIGHT_TOP = 0.0f;
@@ -29,6 +33,7 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
     private ActualViewport viewport;
 
     // Holds the drawing surface which the engine paints into
+    @ExcludeFromJacocoGeneratedReport
     private class ActualViewport extends JPanel {
         public ActualViewport() {
             setFocusable(true);

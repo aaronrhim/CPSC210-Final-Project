@@ -1,5 +1,6 @@
 package ui.panels;
 
+import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import ui.*;
 import model.*;
 
@@ -8,9 +9,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
 
-/*
-    JPanel editing field to input functions and modify axes with sliders
-*/
+/**
+ * JPanel editor used to input functions and modify axes with sliders.
+ */
+@ExcludeFromJacocoGeneratedReport
 public class ScalarFieldEditorPanel extends JPanel implements ActionListener, ChangeListener, Tickable {
 
     private static final int DOMAIN_SLIDER_MIN = -30;
