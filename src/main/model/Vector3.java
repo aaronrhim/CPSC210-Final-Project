@@ -1,14 +1,12 @@
 package model;
 
-import model.exceptions.NonMatchingClassException;
-
 // Represents a 3-component vector which supports a common set of vector operations
 public class Vector3 {
     private static final float EPSILON = 0.001f;
 
-    private float compX;
-    private float compY;
-    private float compZ;
+    private final float compX;
+    private final float compY;
+    private final float compZ;
 
     // EFFECTS:
     // creates a vector all components as 0
@@ -46,30 +44,27 @@ public class Vector3 {
     // returns a vector where each component is the sum of leftVector and
     // rightVector's corresponding components
     public static Vector3 add(Vector3 leftVector, Vector3 rightVector) {
-        float x = leftVector.getX() + rightVector.getX();
-        float y = leftVector.getY() + rightVector.getY();
-        float z = leftVector.getZ() + rightVector.getZ();
-        return new Vector3(x, y, z);
+        return new Vector3(leftVector.compX + rightVector.compX,
+                           leftVector.compY + rightVector.compY,
+                           leftVector.compZ + rightVector.compZ);
     }
 
     // EFFECTS:
     // returns a vector where each component is the difference of leftVector and
-    // rightVector's corresponding componenets
+    // rightVector's corresponding components
     public static Vector3 sub(Vector3 leftVector, Vector3 rightVector) {
-        float x = leftVector.getX() - rightVector.getX();
-        float y = leftVector.getY() - rightVector.getY();
-        float z = leftVector.getZ() - rightVector.getZ();
-        return new Vector3(x, y, z);
+        return new Vector3(leftVector.compX - rightVector.compX,
+                           leftVector.compY - rightVector.compY,
+                           leftVector.compZ - rightVector.compZ);
     }
 
     // EFFECTS:
     // returns a vector where each component is the same as vector's corresponding
     // components multiplied by scalar
     public static Vector3 multiply(Vector3 vector, float scalar) {
-        float x = vector.getX() * scalar;
-        float y = vector.getY() * scalar;
-        float z = vector.getZ() * scalar;
-        return new Vector3(x, y, z);
+        return new Vector3(vector.compX * scalar,
+                           vector.compY * scalar,
+                           vector.compZ * scalar);
     }
 
     // EFFECTS:
@@ -79,9 +74,9 @@ public class Vector3 {
     }
 
     public static Vector3 cross(Vector3 left, Vector3 right) {
-        float x = left.getY() * right.getZ() - left.getZ() * right.getY();
-        float y = left.getZ() * right.getX() - left.getX() * right.getZ();
-        float z = left.getX() * right.getY() - left.getY() * right.getX();
+        float x = left.compY * right.compZ - left.compZ * right.compY;
+        float y = left.compZ * right.compX - left.compX * right.compZ;
+        float z = left.compX * right.compY - left.compY * right.compX;
         return new Vector3(x, y, z);
     }
 
@@ -90,40 +85,40 @@ public class Vector3 {
     // returns a vector with the same direction as the passed vector but the sum of
     // all components is now 1.0f
     public static Vector3 normalize(Vector3 vector) {
-        if (Math.abs(vector.magnitude()) < EPSILON) {
+        float mag = vector.magnitude();
+        if (Math.abs(mag) < EPSILON) {
             return new Vector3(0.0f, 0.0f, 0.0f);
         }
-        return Vector3.multiply(vector, 1.0f / vector.magnitude()); // its unit
+        return Vector3.multiply(vector, 1.0f / mag);
     }
 
     // EFFECTS:
     // returns the dot product of the left and right vectors
     public static float dotProduct(Vector3 leftVector, Vector3 rightVector) {
-        float productX = leftVector.getX() * rightVector.getX();
-        float productY = leftVector.getY() * rightVector.getY();
-        float productZ = leftVector.getZ() * rightVector.getZ();
-        return productX + productY + productZ;
+        return leftVector.compX * rightVector.compX
+             + leftVector.compY * rightVector.compY
+             + leftVector.compZ * rightVector.compZ;
     }
 
     // EFFECTS: returns whether all components of the vector are the same
     @Override
     public boolean equals(Object other) {
-        if (other == null) {
+        if (!(other instanceof Vector3)) {
             return false;
         }
-        if (!(other instanceof Vector3)) {
-            throw new NonMatchingClassException();
-        }
         Vector3 otherVector = (Vector3) other;
-        float dx = Math.abs(this.getX() - otherVector.getX());
-        float dy = Math.abs(this.getY() - otherVector.getY());
-        float dz = Math.abs(this.getZ() - otherVector.getZ());
-        return (dx < EPSILON) && (dy < EPSILON) && (dz < EPSILON);
+        return almostEqual(compX, otherVector.compX)
+            && almostEqual(compY, otherVector.compY)
+            && almostEqual(compZ, otherVector.compZ);
     }
 
     // EFFECTS: produces a string of the form (x, y z)
     @Override
     public String toString() {
         return String.format("(%.2f %.2f %.2f)", compX, compY, compZ);
+    }
+
+    private static boolean almostEqual(float a, float b) {
+        return Math.abs(a - b) < EPSILON;
     }
 }

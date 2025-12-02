@@ -5,15 +5,15 @@ public class Transform {
     private static final float DEGREE_TO_RAD = 0.0174533f;
     private static final int ROW_COUNT = 4;
     private static final int COL_COUNT = 4;
-    private float[][] components;
+    private final float[][] components;
 
     // EFFECTS: creates an identity matrix
     public Transform() {
-        components = new float[ROW_COUNT][COL_COUNT];
-        components[0][0] = 1.0f;
-        components[1][1] = 1.0f;
-        components[2][2] = 1.0f;
-        components[3][3] = 1.0f;
+        this(buildIdentity());
+    }
+
+    private Transform(float[][] backing) {
+        this.components = backing;
     }
 
     public float[][] getComponents() {
@@ -108,21 +108,13 @@ public class Transform {
 
     // EFFECTS: returns the multiplication of two matricies
     public static Transform multiply(Transform left, Transform right) {
-        Transform out = new Transform();
-        float[][] leftComponents = left.components;
-        float[][] rightComponents = right.components;
-        float[][] outComponents = out.components;
-
+        float[][] out = new float[ROW_COUNT][COL_COUNT];
         for (int r = 0; r < ROW_COUNT; r++) {
             for (int c = 0; c < COL_COUNT; c++) {
-                outComponents[r][c] =
-                        leftComponents[r][0] * rightComponents[0][c]
-                        + leftComponents[r][1] * rightComponents[1][c]
-                        + leftComponents[r][2] * rightComponents[2][c]
-                        + leftComponents[r][3] * rightComponents[3][c];
+                out[r][c] = dotRowByColumn(left.components, right.components, r, c);
             }
         }
-        return out;
+        return new Transform(out);
     }
 
     // EFFECTS: returns the multiplication of a matricie and a vector
@@ -157,7 +149,7 @@ public class Transform {
     // EFFECTS: extracts a translation vector from the transform
     public static Vector3 extractTranslation(Transform matrix) {
         float[][] comp = matrix.components;
-        return new Vector3(comp[3][0], comp[3][1], comp[3][2]);
+        return new Vector3(comp[0][3], comp[1][3], comp[2][3]);
     }
 
     // EFFECTS: returns sinx in degrees
@@ -201,4 +193,21 @@ public class Transform {
         return matrix;
     }
 
+    // EFFECTS: builds a standard identity matrix backing
+    private static float[][] buildIdentity() {
+        float[][] out = new float[ROW_COUNT][COL_COUNT];
+        for (int i = 0; i < ROW_COUNT; i++) {
+            out[i][i] = 1.0f;
+        }
+        return out;
+    }
+
+    // EFFECTS: computes dot product between a row of left and column of right
+    private static float dotRowByColumn(float[][] left, float[][] right, int row, int col) {
+        float sum = 0f;
+        for (int k = 0; k < COL_COUNT; k++) {
+            sum += left[row][k] * right[k][col];
+        }
+        return sum;
+    }
 }
