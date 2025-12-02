@@ -1,7 +1,10 @@
 package ui.panels;
 
 import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.io.File;
 
 import persistence.SimulationReadWriter;

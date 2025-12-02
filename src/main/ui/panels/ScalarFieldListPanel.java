@@ -38,7 +38,6 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
     // EFFECTS: updates itself and its editor panel
     @Override
     public void tick() {
-        refreshModel();
         editorPanel.tick();
     }
 

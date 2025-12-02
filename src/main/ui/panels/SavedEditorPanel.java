@@ -7,21 +7,24 @@ import ui.SimulatorGUI;
 import ui.SimulatorUtils;
 import ui.Tickable;
 
-import java.awt.*;
-import java.awt.List;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.io.File;
 
-import javax.swing.*;
-
-import org.junit.Ignore;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import model.ScalarField;
 import model.Simulation;
-
-import java.util.*;
-import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 /**
  * JPanel container for the secondary saved editor panel.
@@ -101,7 +104,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
             SimulatorUtils.transferSimData(loadedSim, simState.getSimulation());
             ScalarField loadedField = simState.getSimulation().getField();
             if (loadedField != null) {
-                java.awt.List<ScalarField> fields = simState.getScalarFields();
+                List<ScalarField> fields = simState.getScalarFields();
                 fields.clear();
                 fields.add(loadedField);
                 SimulatorGUI.getInstance()
