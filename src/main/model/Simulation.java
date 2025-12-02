@@ -54,14 +54,20 @@ public class Simulation {
         return eps; 
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the stop threshold used to detect convergence
     public synchronized void setStopThreshold(float newStopThreshold) {
         this.stopThreshold = newStopThreshold;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the maximum iterations allowed during runUntilConverged
     public synchronized void setMaxIterations(int newMaxIterations) {
         this.maxIterations = newMaxIterations;
     }
     
+    // MODIFIES: this
+    // EFFECTS: sets epsilon used for numerical stability
     public synchronized void setEps(float newEps) {
         this.eps = newEps;
     }
@@ -96,6 +102,8 @@ public class Simulation {
         currentPoint = new Vector2(last);
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the elapsed time counter; clamps to non-negative
     public synchronized void setTimeElapsed(float newTimeElapsed) {
         timeElapsed = Math.max(0f, newTimeElapsed);
     }
@@ -137,6 +145,8 @@ public class Simulation {
         logNewEvent("Loaded scalar field: " + newField.getName());
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the learning rate for gradient descent
     // MODIFIES: this
     // EFFECTS: sets the learning rate for gradient descent
     public synchronized void setLearningRate(float newLearningRate) {

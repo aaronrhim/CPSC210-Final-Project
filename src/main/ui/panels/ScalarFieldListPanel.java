@@ -17,12 +17,9 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
     // EFFECTS: constructs the list using the SimulatorState's scalar field list
     public ScalarFieldListPanel() {
         super(SimulatorState.getInstance().getScalarFields());
-        swingList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    handleSelectionChanged();
-                }
+        swingList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                syncSelectionToSimulation();
             }
         });
 
@@ -43,7 +40,7 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
     // EFFECTS: updates itself and its editor panel
     @Override
     public void tick() {
-        super.tick();
+        refreshModel();
         editorPanel.tick();
     }
 
@@ -56,14 +53,14 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
     // EFFECTS: adds a new scalar field to the backing list
     public void addField(ScalarField field) {
         getListData().add(field);
-        refresh();
+        refreshModel();
     }
 
     // MODIFIES: this
     // EFFECTS: removes field from list if present
     public void removeField(ScalarField field) {
         getListData().remove(field);
-        refresh();
+        refreshModel();
     }
 
     // MODIFIES: this
@@ -72,19 +69,13 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
         int idx = getListData().indexOf(oldField);
         if (idx != -1) {
             getListData().set(idx, newField);
-            refresh();
+            refreshModel();
         }
-    }
-
-    // MODIFIES: swingList
-    // EFFECTS: pushes backing list contents into JList model
-    private void refresh() {
-        swingList.setListData(getListData().toArray(new ScalarField[0]));
     }
 
     // MODIFIES: simulation
     // EFFECTS: syncs selected field with simulation engine and resets start point
-    private void handleSelectionChanged() {
+    private void syncSelectionToSimulation() {
         ScalarField selected = getSelectedField();
         if (selected == null) {
             return;

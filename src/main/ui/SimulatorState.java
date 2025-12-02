@@ -16,8 +16,6 @@ public class SimulatorState implements Tickable {
     public static final float TIMESCALE_MAX = 20.0f;
     private static final float MAX_DELTATIME = 0.1f;
 
-    private static SimulatorState instance;
-
     private Simulation simulation;          // gradient descent engine
     private List<ScalarField> scalarFields; // backing list for ScalarFieldListPanel
 
@@ -31,10 +29,6 @@ public class SimulatorState implements Tickable {
 
     // EFFECTS: creates a new simulation state and initializes defaults
     private SimulatorState() {
-        if (instance != null) {
-            throw new IllegalStateException();
-        }
-
         simulation = new Simulation();
         scalarFields = new ArrayList<>();
 
@@ -51,10 +45,7 @@ public class SimulatorState implements Tickable {
 
     // EFFECTS: returns global singleton instance
     public static SimulatorState getInstance() {
-        if (instance == null) {
-            instance = new SimulatorState();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     // EFFECTS: returns the gradient descent simulation engine
@@ -133,23 +124,37 @@ public class SimulatorState implements Tickable {
     // EFFECTS: advances simulation by real time → sim time, whenever running
     @Override
     public void tick() {
-        long now = System.nanoTime();
-        float deltaTimeSeconds = (now - lastTickNanoseconds) / 1_000_000_000.0f;
-        deltaTimeSeconds = Math.min(deltaTimeSeconds, MAX_DELTATIME);
-        lastTickNanoseconds = now;
-
-        if (!isRunning) {
-            return;
-        }
-
-        // No simulation step without a field or initial start point
-        if (simulation.getField() == null || simulation.getCurrentPoint() == null) {
-            isRunning = false;
+        float delta = pollDeltaTime();
+        if (!shouldStepSimulation()) {
             return;
         }
 
         lock();
-        simulation.step(deltaTimeSeconds * timeScale);
+        simulation.step(delta * timeScale);
         unlock();
+    }
+
+    // EFFECTS: computes elapsed seconds since last tick (clamped)
+    private float pollDeltaTime() {
+        long now = System.nanoTime();
+        float delta = (now - lastTickNanoseconds) / 1_000_000_000.0f;
+        lastTickNanoseconds = now;
+        return Math.min(delta, MAX_DELTATIME);
+    }
+
+    // EFFECTS: returns true if simulation should advance this frame
+    private boolean shouldStepSimulation() {
+        if (!isRunning) {
+            return false;
+        }
+        if (simulation.getField() == null || simulation.getCurrentPoint() == null) {
+            isRunning = false;
+            return false;
+        }
+        return true;
+    }
+
+    private static class Holder {
+        private static final SimulatorState INSTANCE = new SimulatorState();
     }
 }

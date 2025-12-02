@@ -93,19 +93,21 @@ public class RenderEngine3D implements Tickable {
         lastZMax = Float.NaN;
     }
 
-    // panel → RenderEngine contract
+    // EFFECTS: returns the Swing panel hosting the render target
     public JPanel getPanel() {
         return parent;
     }
 
-    // EFFECTS: transforms the vt (worldspace -> x,y,z) to camera-space coordinates -> x,y
+    // REQUIRES: vt non-null
+    // MODIFIES: this
+    // EFFECTS: sets the view transform used for projecting world coordinates into camera space
     public void setViewTransform(Transform vt) {
         this.viewTransform = vt;
     }
 
-    // REQUIRES: Graphics which is n^2 square
-    // MODIFIES: imageSync locks
-    // EFFECTS: updates 60 times a second (Thread set to sleep 16)
+    // REQUIRES: g not null
+    // MODIFIES: none (reads from image under lock)
+    // EFFECTS: draws the latest rendered frame into the provided Graphics context
     // NOTE: My "Y" axis is actually my Z axis. Standard in vt
     public void drawCurrentFrame(Graphics g) {
         Rectangle bounds = g.getClipBounds();
@@ -121,8 +123,8 @@ public class RenderEngine3D implements Tickable {
         imageSync.unlock();
     }
 
-    // REQUIRES: simState != null annd imageSync to be ready
-    // MODIFIES: simState and imageSync are temporarily locked until frame is ready
+    // REQUIRES: simState != null and imageSync available
+    // MODIFIES: image, depthBuffer, colorBuffer, simState (reads)
     @Override
     public void tick() {
         simState.lock();

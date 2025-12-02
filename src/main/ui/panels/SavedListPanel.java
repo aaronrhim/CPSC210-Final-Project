@@ -26,47 +26,38 @@ public class SavedListPanel extends AbstractListPanel<String> {
         return savedEditorPanel;
     }
 
-    // MODIFIES: this, super
-    // EFFECTS: updates strings of save filenames and saves to ../../data/ directory
-    @SuppressWarnings("methodlength")
+    // MODIFIES: this
+    // EFFECTS: syncs the backing list with files on disk, then updates the editor
     @Override
     public void tick() {
-        super.tick();
+        reconcileWithFilesystem();
+        refreshModel();
+        savedEditorPanel.tick();
+    }
 
+    // MODIFIES: this
+    // EFFECTS: rebuilds the backing list from save files on disk
+    private void reconcileWithFilesystem() {
+        Set<String> discovered = new TreeSet<>();
         File saveDir = new File(SimulationReadWriter.SAVE_PATH);
         File[] subFiles = saveDir.listFiles();
-
-        List<String> newFileNames = new ArrayList<String>(subFiles.length);
-        for (File subFile : subFiles) {
-            if (subFile.isDirectory() || !subFile.getName().endsWith(SimulationReadWriter.FILE_SUFFIX)) {
-                continue;
-            }
-
-            String subFileName = subFile.getName();
-            subFileName = subFileName.substring(0, subFileName.lastIndexOf("."));
-            newFileNames.add(subFileName);
-        }
-
-        List<String> savedSimOptions = super.getListData();
-
-        // Note: You need remove things twice cause some things continue to exist after first pass
-        List<String> toRemove = new ArrayList<String>(savedSimOptions.size());
-        for (String oldFileName : savedSimOptions) {
-            if (!newFileNames.contains(oldFileName)) {
-                toRemove.add(oldFileName);
-            }
-        }
-        for (String toRemoveName : toRemove) {
-            savedSimOptions.remove(toRemoveName);
-        }
-
-        // add everything not already there
-        for (String newFileName : newFileNames) {
-            if (!savedSimOptions.contains(newFileName)) {
-                savedSimOptions.add(newFileName);
+        if (subFiles != null) {
+            for (File subFile : subFiles) {
+                if (subFile.isFile() && subFile.getName().endsWith(SimulationReadWriter.FILE_SUFFIX)) {
+                    String name = stripExtension(subFile.getName());
+                    discovered.add(name);
+                }
             }
         }
 
-        savedEditorPanel.tick();
+        List<String> backing = getListData();
+        backing.clear();
+        backing.addAll(discovered);
+    }
+
+    // EFFECTS: removes the final extension from a filename
+    private String stripExtension(String filename) {
+        int lastDot = filename.lastIndexOf('.');
+        return (lastDot == -1) ? filename : filename.substring(0, lastDot);
     }
 }

@@ -10,30 +10,20 @@ import java.awt.*;
  */
 @ExcludeFromJacocoGeneratedReport
 public class SimulatorGUI implements Tickable {
-    private static SimulatorGUI instance;
-
     private static final String WINDOW_TITLE = "Gradient Descent Visualizer";
     private static final Dimension WINDOW_DIMENSION = new Dimension(1000, 700);
 
-    private MainWindow mainWindow;
+    private final MainWindow mainWindow;
 
-    // EFFECTS: throws IllegalStateException if an instance already exists,
-    //          initializes the main window
+    // EFFECTS: initializes the main window
     private SimulatorGUI() {
         System.out.println("[DEBUG] SimulatorGUI constructor called");
-        if (instance != null) {
-            throw new IllegalStateException("SimulatorGUI already instantiated");
-        }
         mainWindow = new MainWindow(WINDOW_TITLE, WINDOW_DIMENSION);
     }
 
-
-    // EFFECTS: returns the singleton instance, constructing it if necessary
+    // EFFECTS: returns the singleton instance, constructing it on first access
     public static SimulatorGUI getInstance() {
-        if (instance == null) {
-            instance = new SimulatorGUI();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     public MainWindow getMainWindow() {
@@ -53,5 +43,10 @@ public class SimulatorGUI implements Tickable {
                 .getEditorTabPanel()
                 .getScalarFieldListPanel()
                 .getSelectedField();
+    }
+
+    // Lazy-loaded holder to avoid double-checked locking
+    private static class Holder {
+        private static final SimulatorGUI INSTANCE = new SimulatorGUI();
     }
 }

@@ -18,50 +18,33 @@ import model.EventLog;
 public class MainWindow extends JFrame implements Tickable {
     public static final double SPLIT_WEIGHT = 0.01f;
 
-    private EditorTabPanel editorTabPanel;
-    private ViewportPanel3D viewportPanel;
+    private final EditorTabPanel editorTabPanel;
+    private final ViewportPanel3D viewportPanel;
 
+    // REQUIRES: title and size non-null
+    // MODIFIES: this
     // EFFECTS: initializes all window parameters, the editorTab and the 3D viewport
     public MainWindow(String title, Dimension size) {
+        super(title);
         setLayout(new BorderLayout());
-        setTitle(title);
         setPreferredSize(size);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(SimulatorUtils.loadImage("icon.png"));
-
-        // NOTE:
-        // I couldn't find another way to log all events on program exit other than
-        // adding a window listener for the close event with the limited amount of time i have
-        addWindowListener(new WindowAdapter() {
-            // Adapted from:
-            // https://stackoverflow.com/questions/16295942/java-swing-adding-action-listener-for-exit-on-close
-            // EFFECTS: prints all events in the eventlog instance
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                System.out.println("EVENT LOG:");
-                for (Event event : EventLog.getInstance()) {
-                    System.out.println(event.getDescription());
-                }
-            }
-        });
+        addWindowListener(new WindowLogger());
 
         editorTabPanel = new EditorTabPanel();
         viewportPanel = new ViewportPanel3D();
 
-        JSplitPane splitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorTabPanel, viewportPanel);
-        splitter.setResizeWeight(SPLIT_WEIGHT);
-        splitter.setEnabled(false);
-
-        add(splitter);
-        pack();
-        setResizable(false);
-        setVisible(true);
+        add(buildSplitPane(), BorderLayout.CENTER);
+        finalizeWindow();
     }
 
+    // EFFECTS: returns the editor tab panel
     public EditorTabPanel getEditorTabPanel() {
         return editorTabPanel;
     }
 
+    // EFFECTS: returns the 3D viewport panel
     public ViewportPanel3D getViewportPanel() {
         return viewportPanel;
     }
@@ -72,5 +55,33 @@ public class MainWindow extends JFrame implements Tickable {
     public void tick() {
         editorTabPanel.tick();
         viewportPanel.tick();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: constructs a split pane between editor and viewport
+    private JSplitPane buildSplitPane() {
+        JSplitPane splitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editorTabPanel, viewportPanel);
+        splitter.setResizeWeight(SPLIT_WEIGHT);
+        splitter.setEnabled(false);
+        return splitter;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: packs and shows window
+    private void finalizeWindow() {
+        pack();
+        setResizable(false);
+        setVisible(true);
+    }
+
+    // Logs event history on close in a dedicated listener
+    private static class WindowLogger extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent windowEvent) {
+            System.out.println("EVENT LOG:");
+            for (Event event : EventLog.getInstance()) {
+                System.out.println(event.getDescription());
+            }
+        }
     }
 }

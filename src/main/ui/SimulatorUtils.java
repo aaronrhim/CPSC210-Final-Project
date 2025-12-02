@@ -27,7 +27,7 @@ public class SimulatorUtils {
     private static final String IMAGE_PATH = "./data/image/";
     private static final Random RANDOM = new Random();
 
-    // image helpers
+    // EFFECTS: loads an image by name from the data/image directory; throws IllegalStateException on failure
     public static BufferedImage loadImage(String imgName) {
         try {
             return ImageIO.read(new File(IMAGE_PATH + imgName));
@@ -36,6 +36,7 @@ public class SimulatorUtils {
         }
     }
 
+    // EFFECTS: creates a centered bold title label containing message
     public static JLabel makeTitleLabel(String message) {
         JLabel title = new JLabel(message);
         title.setHorizontalAlignment(JLabel.CENTER);
@@ -44,6 +45,7 @@ public class SimulatorUtils {
         return title;
     }
 
+    // EFFECTS: constructs GridBagConstraints for a component positioned at (gx, gy) with given width
     public static GridBagConstraints makeGbConstraints(int gx, int gy, int width) {
         GridBagConstraints gbConst = new GridBagConstraints();
         gbConst.fill = GridBagConstraints.BOTH;
@@ -55,6 +57,9 @@ public class SimulatorUtils {
         return gbConst;
     }
 
+    // REQUIRES: parent non-null; title non-null
+    // MODIFIES: parent
+    // EFFECTS: creates and adds a labeled text field row to the parent panel and returns the field
     public static JTextField initAndAddPropertyEditField(JPanel parent,
                                                          ActionListener listener,
                                                          String title,
@@ -68,11 +73,12 @@ public class SimulatorUtils {
         return textField;
     }
 
-    // valid helpers (will move to tests later)
+    // EFFECTS: returns true iff the provided name is non-null, non-empty, and not starting with a space
     public static boolean checkIfValidName(String str) {
         return (str != null && !str.isEmpty() && str.charAt(0) != ' ');
     }
 
+    // EFFECTS: attempts to parse a float from str; returns null if parsing fails
     public static Float tryParseFloat(String str) {
         try {
             return Float.parseFloat(str.trim());
@@ -81,6 +87,7 @@ public class SimulatorUtils {
         }
     }
 
+    // EFFECTS: returns true if expr is non-null/non-empty and contains an x or y variable
     public static boolean checkIfValidExpression(String expr) {
         if (expr == null || expr.isEmpty()) {
             return false;
@@ -93,6 +100,8 @@ public class SimulatorUtils {
         return "<expr>";
     }
 
+    // REQUIRES: expr valid per checkIfValidExpression
+    // EFFECTS: builds a ScalarField from the given expression string using exp4j
     public static ScalarField createScalarFieldFromExpression(String expr) {
         if (!checkIfValidExpression(expr)) {
             throw new IllegalArgumentException("Invalid scalar field expression: " + expr);
@@ -116,8 +125,9 @@ public class SimulatorUtils {
         return new ScalarField(expr, fn);
     }
 
+    // REQUIRES: src and dst non-null
     // MODIFIES: dst
-    // EFFECTS: copies all simulation data from src into dst
+    // EFFECTS: copies all simulation data from src into dst, preserving paths/parameters where possible
     public static void transferSimData(Simulation src, Simulation dst) {
         synchronized (src) {
             // Field
@@ -147,7 +157,8 @@ public class SimulatorUtils {
         }
     }
 
-    // choose random point in scalar field
+    // REQUIRES: max > min
+    // EFFECTS: returns a random float in [min, max)
     public static float randomFloatInRange(float min, float max) {
         return min + RANDOM.nextFloat() * (max - min);
     }

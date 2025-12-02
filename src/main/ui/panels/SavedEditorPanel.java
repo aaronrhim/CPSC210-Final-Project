@@ -30,7 +30,9 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
     private JButton newButton;
     private JButton deleteButton;
 
-    // EFFECTS: Constructor to initialize all UI elements (position, grids, buttons, fields etc)
+    // REQUIRES: parent non-null
+    // MODIFIES: this
+    // EFFECTS: initializes all UI elements (position, grids, buttons, fields etc)
     public SavedEditorPanel(SavedListPanel parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
@@ -64,8 +66,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
     }
 
     // MODIFIES: this
-    // EFFECTS: uses java.awt to listen to what button/textfield has been pressed and handles
-    // the action accordingly
+    // EFFECTS: routes text and button events to handlers
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == renameField) {
@@ -80,8 +81,8 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
         }
     }
 
-    // MODIFIES: this
-    // EFFECTS: handles all button combinations by locking the simulation mutex as it directly modifies it
+    // MODIFIES: SimulatorState and filesystem
+    // EFFECTS: executes the button's action while the simulation lock is held
     private void handleButtonPressed(JButton source) throws FileNotFoundException {
         SimulatorState simState = SimulatorState.getInstance();
         String selectedSaveName = parent.swingList.getSelectedValue();
@@ -112,6 +113,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
         simState.unlock();
     }
 
+    // MODIFIES: filesystem, simState
     // EFFECTS: ensure the simulation is paused while writing it to the specified file location
     private void handleSaveSimulation(SimulatorState simState, String fileDest) {
         boolean wasRunning = simState.getIsRunning();
@@ -126,9 +128,8 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
         simState.setIsRunning(wasRunning);
     }
 
-    // MODIFIES: this
-    // EFFECTS: handles renaming the simulation. renames the simulation if the name
-    // is valid, and the name doesnt already exist (persistance requirements)
+    // MODIFIES: filesystem
+    // EFFECTS: handles renaming the simulation if valid and non-duplicate
     private void handleRenameSave() {
         System.out.println("reached");
         String selectedSaveName = parent.swingList.getSelectedValue();

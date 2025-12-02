@@ -6,6 +6,9 @@ import java.io.*;
 import org.json.*;
 import java.util.*;
 
+/**
+ * Utilities for writing and reading {@link Simulation} data to and from JSON files on disk.
+ */
 public class SimulationReadWriter {
     public static final String SAVE_PATH = "./data/";
     public static final int TAB_SPACES = 4;
@@ -15,6 +18,7 @@ public class SimulationReadWriter {
         // not allowed to be instantiated
     }
 
+    // REQUIRES: fileTitle is non-null/non-empty
     // EFFECTS: given a file title, produces the java.io File object which
     // represents the save file in the save directory
     public static File fileFromFileTitle(String fileTitle) {
@@ -23,6 +27,8 @@ public class SimulationReadWriter {
         return file;
     }
 
+    // REQUIRES: simulation non-null; fileTitle non-null/non-empty
+    // MODIFIES: filesystem
     // EFFECTS: writes a given simulation with a given file title to the disk
     public static void writeSimulation(Simulation simulation, String fileTitle)
             throws IOException, FileNotFoundException {
@@ -38,9 +44,10 @@ public class SimulationReadWriter {
         writeStream.close();
     }
 
-    // EFFECTS: reads a given simulation with the given file title from the disk,
-    // throws FileNotFoundException if the fileTitle doesnt reference any existing
-    // saved file
+    // REQUIRES: fileTitle non-null/non-empty
+    // MODIFIES: none
+    // EFFECTS: reads a given simulation with the given file title from the disk;
+    // throws FileNotFoundException if the fileTitle doesn't reference any existing saved file
     public static Simulation readSimulation(String fileTitle) throws FileNotFoundException {
         File readFile = fileFromFileTitle(fileTitle);
         if (!readFile.isFile()) {

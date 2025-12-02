@@ -2,62 +2,31 @@ package ui.panels;
 
 import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import java.awt.*;
-import ui.Tickable;
 import javax.swing.*;
+import ui.Tickable;
 
 /**
  * Abstract list panel used to view and edit elements in a list.
+ * Uses a backing {@link java.util.List} plus a {@link DefaultListModel}
+ * to keep Swing and domain data loosely coupled.
  */
 @ExcludeFromJacocoGeneratedReport
 public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
     public static final double SPLIT_WEIGHT = 0.9;
 
-    private InternalListModel listModel;
-    protected JList<T> swingList;
-    protected JScrollPane listScroller;
-    protected JPanel editorPanel;
+    private final java.util.List<T> backingData;
+    private final DefaultListModel<T> listModel;
+    protected final JList<T> swingList;
+    protected final JScrollPane listScroller;
+    protected final JPanel editorPanel;
 
-    // Java Swing is just dumb, particularly the JList model system which requires a separate class called
-    // ListModel thats build into the package. This means if I ever try to update java.util.List through my
-    // threaded tickers, the JList won't know about it unless I tell the ListModel to update itself.
-    @ExcludeFromJacocoGeneratedReport
-    private class InternalListModel extends AbstractListModel<T> implements Tickable {
-        private java.util.List<T> targetListData;
-
-        // EFFECTS: sets the internal target list to point at listData
-        public InternalListModel(java.util.List<T> listData) {
-            targetListData = listData;
-        }
-
-        public java.util.List<T> getListData() {
-            return targetListData;
-        }
-
-        // EFFECTS: returns internal list size
-        @Override
-        public int getSize() {
-            return targetListData.size();
-        }
-
-        // EFFECTS: fetches item from internal list
-        @Override
-        public T getElementAt(int index) {
-            return targetListData.get(index);
-        }
-
-        // EFFECTS: forces an update to the list
-        @Override
-        public void tick() {
-            fireContentsChanged(this, 0, targetListData.size() - 1);
-        }
-    }
-
-    // EFFECTS: initializes list to be empty and listScroller to contain list and 
-    // calls on user defined initialization of editorpanel
+    // REQUIRES: listData non-null
+    // MODIFIES: this
+    // EFFECTS: wires a scrolling list to the provided backing data and creates an editor panel
     public AbstractListPanel(java.util.List<T> listData) {
-        setLayout(new BorderLayout());
-
-        listModel = new InternalListModel(listData);
+        super(new BorderLayout());
+        backingData = listData;
+        listModel = new DefaultListModel<>();
         swingList = new JList<>(listModel);
         listScroller = new JScrollPane(swingList);
         editorPanel = initEditorPanel();
@@ -65,29 +34,42 @@ public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
         JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, listScroller, editorPanel);
         splitter.setResizeWeight(SPLIT_WEIGHT);
         splitter.setEnabled(false);
+        add(splitter, BorderLayout.CENTER);
 
-        add(splitter);
+        refreshModel();
     }
 
+    // EFFECTS: returns the Swing list widget
     public JList<T> getSwingList() {
         return swingList;
     }
 
+    // EFFECTS: returns the editor panel for subclasses
     public JPanel getEditorPanel() {
         return editorPanel;
     }
 
+    // EFFECTS: returns the live backing data list
     public java.util.List<T> getListData() {
-        return listModel.getListData();
+        return backingData;
     }
 
     // EFFECTS: expected that the user defines a means to initialize the editor panel in this method, and returns it
     protected abstract JPanel initEditorPanel();
 
     // MODIFIES: this
-    // EFFECTS: updates the current object
+    // EFFECTS: reloads Swing list content from backing data and triggers any editor updates
     @Override
     public void tick() {
-        listModel.tick();
+        refreshModel();
+    }
+
+    // MODIFIES: listModel
+    // EFFECTS: replaces all elements in the Swing model with the backing data snapshot
+    protected void refreshModel() {
+        listModel.clear();
+        for (T item : backingData) {
+            listModel.addElement(item);
+        }
     }
 }
