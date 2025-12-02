@@ -67,9 +67,18 @@ public abstract class AbstractListPanel<T> extends JPanel implements Tickable {
     // MODIFIES: listModel
     // EFFECTS: replaces all elements in the Swing model with the backing data snapshot
     protected void refreshModel() {
+        T selected = swingList.getSelectedValue();
+        ListSelectionModel selModel = swingList.getSelectionModel();
+        selModel.setValueIsAdjusting(true);
         listModel.clear();
         for (T item : backingData) {
             listModel.addElement(item);
         }
+        if (selected != null && backingData.contains(selected)) {
+            swingList.setSelectedValue(selected, true);
+        } else if (listModel.getSize() > 0 && swingList.getSelectedIndex() == -1) {
+            swingList.setSelectedIndex(0);
+        }
+        selModel.setValueIsAdjusting(false);
     }
 }

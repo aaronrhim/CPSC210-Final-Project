@@ -40,13 +40,15 @@ public class SavedListPanel extends AbstractListPanel<String> {
     private void reconcileWithFilesystem() {
         Set<String> discovered = new TreeSet<>();
         File saveDir = new File(SimulationReadWriter.SAVE_PATH);
+        saveDir.mkdirs();
         File[] subFiles = saveDir.listFiles();
-        if (subFiles != null) {
-            for (File subFile : subFiles) {
-                if (subFile.isFile() && subFile.getName().endsWith(SimulationReadWriter.FILE_SUFFIX)) {
-                    String name = stripExtension(subFile.getName());
-                    discovered.add(name);
-                }
+        if (subFiles == null) {
+            return;
+        }
+        for (File subFile : subFiles) {
+            if (subFile.isFile() && subFile.getName().endsWith(SimulationReadWriter.FILE_SUFFIX)) {
+                String name = stripExtension(subFile.getName());
+                discovered.add(name);
             }
         }
 

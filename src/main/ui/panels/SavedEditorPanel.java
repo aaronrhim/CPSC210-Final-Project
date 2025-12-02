@@ -3,14 +3,19 @@ package ui.panels;
 import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import persistence.SimulationReadWriter;
 import ui.SimulatorState;
+import ui.SimulatorGUI;
 import ui.SimulatorUtils;
 import ui.Tickable;
 
 import java.awt.*;
+import java.awt.List;
 import java.awt.event.*;
 
 import javax.swing.*;
 
+import org.junit.Ignore;
+
+import model.ScalarField;
 import model.Simulation;
 
 import java.util.*;
@@ -83,6 +88,7 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
 
     // MODIFIES: SimulatorState and filesystem
     // EFFECTS: executes the button's action while the simulation lock is held
+    @SuppressWarnings("methodlength")
     private void handleButtonPressed(JButton source) throws FileNotFoundException {
         SimulatorState simState = SimulatorState.getInstance();
         String selectedSaveName = parent.swingList.getSelectedValue();
@@ -93,6 +99,17 @@ public class SavedEditorPanel extends JPanel implements ActionListener, Tickable
             simState.setIsRunning(false);
             Simulation loadedSim = SimulationReadWriter.readSimulation(selectedSaveName);
             SimulatorUtils.transferSimData(loadedSim, simState.getSimulation());
+            ScalarField loadedField = simState.getSimulation().getField();
+            if (loadedField != null) {
+                java.awt.List<ScalarField> fields = simState.getScalarFields();
+                fields.clear();
+                fields.add(loadedField);
+                SimulatorGUI.getInstance()
+                        .getMainWindow()
+                        .getEditorTabPanel()
+                        .getScalarFieldListPanel()
+                        .selectField(loadedField);
+            }
         }
 
         if (source == saveButton) {

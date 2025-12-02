@@ -10,6 +10,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 
 import model.ModelEventLogger;
+
 /**
  * JPanel editor used to input functions and modify axes with sliders.
  */

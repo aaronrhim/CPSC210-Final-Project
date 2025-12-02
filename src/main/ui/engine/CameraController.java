@@ -103,6 +103,7 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
         viewTransform = Transform.multiply(viewTransform, Transform.rotationX(-pitch));
         parent.setViewTransform(viewTransform);
     }
+    
     // EFFECTS: initializes and registers input listeners
     public CameraController(RenderEngine3D parent) {
         this.parent = parent;

@@ -71,6 +71,18 @@ public class ScalarFieldListPanel extends AbstractListPanel<ScalarField> {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: ensures the given field is present in the list and selects it
+    public void selectField(ScalarField field) {
+        if (field == null) {
+            return;
+        }
+        if (!getListData().contains(field)) {
+            addField(field);
+        }
+        getSwingList().setSelectedValue(field, true);
+    }
+
     // MODIFIES: simulation
     // EFFECTS: syncs selected field with simulation engine and resets start point
     private void syncSelectionToSimulation() {
