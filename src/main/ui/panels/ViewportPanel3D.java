@@ -21,16 +21,16 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
     private static final int VIEWPORT_RESOLUTION = 350;
     private static final int PREVIEW_EPOCHS = 20;
 
-    private JButton startButton;
-    private JButton stopButton;
-    private JButton resetButton; // crashes atm
-    private JButton randomPointButton;
-    private JLabel timeElapsedLabel;
-    private JSlider timeScaleSlider;
+    private final JButton startButton;
+    private final JButton stopButton;
+    private final JButton resetButton; // crashes atm
+    private final JButton randomPointButton;
+    private final JLabel timeElapsedLabel;
+    private final JSlider timeScaleSlider;
 
-    private RenderEngine3D renderEngine;
-    private CameraController cameraController;
-    private ActualViewport viewport;
+    private final RenderEngine3D renderEngine;
+    private final CameraController cameraController;
+    private final ActualViewport viewport;
 
     // Holds the drawing surface which the engine paints into
     @ExcludeFromJacocoGeneratedReport
@@ -53,56 +53,34 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         System.out.println("[DEBUG] ViewportPanel3D created");
         setLayout(new BorderLayout());
 
-        // Top panel (simulation control buttons)
-        JPanel topSimControlPanel = new JPanel(new FlowLayout());
-
         startButton = new JButton("Start");
         startButton.addActionListener(this);
-        topSimControlPanel.add(startButton);
-
         stopButton = new JButton("Stop");
         stopButton.addActionListener(this);
-        topSimControlPanel.add(stopButton);
-
         resetButton = new JButton("Reset");
         resetButton.addActionListener(this);
-        topSimControlPanel.add(resetButton);
-
         randomPointButton = new JButton("Random Start");
         randomPointButton.addActionListener(this);
-        topSimControlPanel.add(randomPointButton);
-
         timeElapsedLabel = new JLabel();
-        topSimControlPanel.add(timeElapsedLabel);
 
-        // viewport
         viewport = new ActualViewport();
         renderEngine = new RenderEngine3D(viewport, VIEWPORT_RESOLUTION);
         cameraController = new CameraController(renderEngine);
 
-        JSplitPane topSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topSimControlPanel, viewport);
+        JSplitPane topSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, buildTopControls(), viewport);
         topSplitter.setResizeWeight(SPLIT_WEIGHT_TOP);
         topSplitter.setEnabled(false);
-
-        // bottom panel (timescale slider)
-        JPanel bottomSimControlPanel = new JPanel(new FlowLayout());
-        JLabel timeScaleLabel = new JLabel("Simulation Timescale:");
-        bottomSimControlPanel.add(timeScaleLabel);
 
         timeScaleSlider = new JSlider(
                 (int) SimulatorState.TIMESCALE_MIN,
                 (int) SimulatorState.TIMESCALE_MAX,
                 (int) SimulatorState.getInstance().getTimeScale());
-        timeScaleSlider.setMajorTickSpacing(4);
-        timeScaleSlider.setPaintTicks(true);
-        timeScaleSlider.setPaintLabels(true);
-        bottomSimControlPanel.add(timeScaleSlider);
 
-        JSplitPane bottomSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topSplitter, bottomSimControlPanel);
+        JSplitPane bottomSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topSplitter, buildBottomControls());
         bottomSplitter.setResizeWeight(SPLIT_WEIGHT_BOTTOM);
         bottomSplitter.setEnabled(false);
 
-        add(bottomSplitter);
+        add(bottomSplitter, BorderLayout.CENTER);
     }
 
     public RenderEngine3D getRenderEngine() {
@@ -123,21 +101,7 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
             SimulatorState.getInstance().setIsRunning(false);
         }
         if (e.getSource() == resetButton) {
-            SimulatorState.getInstance().setIsRunning(false);
-
-            Simulation sim = SimulatorState.getInstance().getSimulation();
-            ScalarField selected = SimulatorGUI.getInstance().getSelectedField();
-
-            if (selected == null) {
-                System.out.println("[DEBUG][ERROR] No scalar field selected during reset. Aborting reset.");
-                return;
-            }
-
-            Simulation fresh = new Simulation();
-            fresh.setField(selected);
-            fresh.setInitialPoint(0f, 0f);
-
-            SimulatorUtils.transferSimData(fresh, sim);
+            performReset();
         }
 
         if (e.getSource() == randomPointButton) {
@@ -213,5 +177,52 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         sim.setInitialPoint(randomX, randomY);
         sim.runEpochs(PREVIEW_EPOCHS);
         SimulatorState.getInstance().setIsRunning(false);
+    }
+
+    // MODIFIES: sim state
+    // EFFECTS: resets simulation while preserving selected field
+    private void performReset() {
+        SimulatorState state = SimulatorState.getInstance();
+        state.setIsRunning(false);
+
+        Simulation sim = state.getSimulation();
+        ScalarField selected = SimulatorGUI.getInstance().getSelectedField();
+
+        if (selected == null) {
+            System.out.println("[DEBUG][ERROR] No scalar field selected during reset. Aborting reset.");
+            return;
+        }
+
+        Simulation fresh = new Simulation();
+        fresh.setField(selected);
+        fresh.setInitialPoint(0f, 0f);
+
+        SimulatorUtils.transferSimData(fresh, sim);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: builds the top control panel with buttons and labels
+    private JPanel buildTopControls() {
+        JPanel topSimControlPanel = new JPanel(new FlowLayout());
+        topSimControlPanel.add(startButton);
+        topSimControlPanel.add(stopButton);
+        topSimControlPanel.add(resetButton);
+        topSimControlPanel.add(randomPointButton);
+        topSimControlPanel.add(timeElapsedLabel);
+        return topSimControlPanel;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: builds bottom control panel containing the timescale slider
+    private JPanel buildBottomControls() {
+        JPanel bottomSimControlPanel = new JPanel(new FlowLayout());
+        JLabel timeScaleLabel = new JLabel("Simulation Timescale:");
+        bottomSimControlPanel.add(timeScaleLabel);
+
+        timeScaleSlider.setMajorTickSpacing(4);
+        timeScaleSlider.setPaintTicks(true);
+        timeScaleSlider.setPaintLabels(true);
+        bottomSimControlPanel.add(timeScaleSlider);
+        return bottomSimControlPanel;
     }
 }

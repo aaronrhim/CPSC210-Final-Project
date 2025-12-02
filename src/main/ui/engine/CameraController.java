@@ -27,9 +27,9 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
 
     private static final float PITCH_RANGE = 85.0f;
 
-    private RenderEngine3D parent;
+    private final RenderEngine3D parent;
 
-    private Set<Integer> keysDown;
+    private final Set<Integer> keysDown;
     private long lastTickNanoseconds;
 
     private Vector3 position;
@@ -42,6 +42,67 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
 
     private Transform viewTransform;
 
+    // EFFECTS: computes seconds since last tick and resets timestamp
+    private float computeDeltaSeconds() {
+        long now = System.nanoTime();
+        float deltaTime = (now - lastTickNanoseconds) / 1_000_000_000.0f;
+        lastTickNanoseconds = now;
+        return deltaTime;
+    }
+
+    // EFFECTS: computes base acceleration factoring modifier keys
+    private float baseAcceleration() {
+        float accel = ACCELERATION;
+        if (keysDown.contains(KeyEvent.VK_SHIFT)) {
+            accel *= ACCELERATION_SHIFT_FACTOR;
+        }
+        if (keysDown.contains(KeyEvent.VK_CONTROL)) {
+            accel *= ACCELERATION_CTRL_FACTOR;
+        }
+        return accel;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: clamps velocity magnitude and applies drag
+    private void applySpeedLimitAndDrag(float deltaTime) {
+        float maxVel = MAX_VELOCITY;
+        if (keysDown.contains(KeyEvent.VK_SHIFT)) {
+            maxVel *= MAX_VELOCITY_SHIFT_FACTOR;
+        }
+        if (keysDown.contains(KeyEvent.VK_CONTROL)) {
+            maxVel *= MAX_VELOCITY_CTRL_FACTOR;
+        }
+
+        velocity = clampVector(velocity, maxVel);
+        velocity = Vector3.multiply(velocity, (float) Math.pow(1.0f - DRAG, deltaTime));
+    }
+
+    // MODIFIES: this
+    // EFFECTS: integrates position and orientation from velocities
+    private void integratePose(float deltaTime) {
+        Transform rotation = Transform.multiply(Transform.rotationX(pitch), Transform.rotationY(yaw));
+        Vector3 move = Transform.multiply(rotation, velocity);
+        position = Vector3.add(position, Vector3.multiply(move, deltaTime));
+
+        yawVelocity = clamp(yawVelocity, MAX_ANGULAR_VELOCITY);
+        pitchVelocity = clamp(pitchVelocity, MAX_ANGULAR_VELOCITY);
+
+        yaw += yawVelocity * deltaTime;
+        pitch += pitchVelocity * deltaTime;
+        pitch = clamp(pitch, PITCH_RANGE);
+
+        yawVelocity *= Math.pow(1.0f - ANGULAR_DRAG, deltaTime);
+        pitchVelocity *= Math.pow(1.0f - ANGULAR_DRAG, deltaTime);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: rebuilds the view transform matrix from current pose
+    private void buildViewMatrix() {
+        viewTransform = Transform.translation(Vector3.multiply(position, -1.0f));
+        viewTransform = Transform.multiply(viewTransform, Transform.rotationY(-yaw));
+        viewTransform = Transform.multiply(viewTransform, Transform.rotationX(-pitch));
+        parent.setViewTransform(viewTransform);
+    }
     // EFFECTS: initializes and registers input listeners
     public CameraController(RenderEngine3D parent) {
         this.parent = parent;
@@ -50,7 +111,6 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
 
         keysDown = new HashSet<>();
         resetCamera();
-
         lastTickNanoseconds = System.nanoTime();
     }
 
@@ -71,59 +131,19 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
     // MODIFIES: this
     // EFFECTS: polls time delta, processes input, integrates motion, and updates view transform
     public void tick() {
-        long now = System.nanoTime();
-        float deltaTime = (now - lastTickNanoseconds) / 1_000_000_000.0f;
-        lastTickNanoseconds = now;
-
-        if (!parent.getPanel().isFocusOwner()) {
-            keysDown.clear();
-        }
-
+        float deltaTime = computeDeltaSeconds();
+        clearKeysIfUnfocused();
         handleInputs(deltaTime);
-
-        Transform rotation = Transform.multiply(Transform.rotationX(pitch), Transform.rotationY(yaw));
-        float maxVel = MAX_VELOCITY;
-        if (keysDown.contains(KeyEvent.VK_SHIFT)) {
-            maxVel *= MAX_VELOCITY_SHIFT_FACTOR;
-        }
-        if (keysDown.contains(KeyEvent.VK_CONTROL)) {
-            maxVel *= MAX_VELOCITY_CTRL_FACTOR;
-        }
-
-        velocity = clampVector(velocity, maxVel);
-        velocity = Vector3.multiply(velocity, (float) Math.pow(1.0f - DRAG, deltaTime));
-
-        Vector3 move = Transform.multiply(rotation, velocity);
-        position = Vector3.add(position, Vector3.multiply(move, deltaTime));
-
-        yawVelocity = clamp(yawVelocity, MAX_ANGULAR_VELOCITY);
-        pitchVelocity = clamp(pitchVelocity, MAX_ANGULAR_VELOCITY);
-
-        yaw += yawVelocity * deltaTime;
-        pitch += pitchVelocity * deltaTime;
-
-        pitch = clamp(pitch, PITCH_RANGE);
-
-        yawVelocity *= Math.pow(1.0f - ANGULAR_DRAG, deltaTime);
-        pitchVelocity *= Math.pow(1.0f - ANGULAR_DRAG, deltaTime);
-
-        viewTransform = Transform.translation(Vector3.multiply(position, -1.0f));
-        viewTransform = Transform.multiply(viewTransform, Transform.rotationY(-yaw));
-        viewTransform = Transform.multiply(viewTransform, Transform.rotationX(-pitch));
-        parent.setViewTransform(viewTransform);
+        applySpeedLimitAndDrag(deltaTime);
+        integratePose(deltaTime);
+        buildViewMatrix();
     }
 
     // MODIFIES: this
     // EFFECTS: applies acceleration/rotation based on current input state
     @SuppressWarnings("methodlength")
     private void handleInputs(float deltaTime) {
-        float accel = ACCELERATION;
-        if (keysDown.contains(KeyEvent.VK_SHIFT)) {
-            accel *= ACCELERATION_SHIFT_FACTOR;
-        }
-        if (keysDown.contains(KeyEvent.VK_CONTROL)) {
-            accel *= ACCELERATION_CTRL_FACTOR;
-        }
+        float accel = baseAcceleration();
         if (keysDown.contains(KeyEvent.VK_W)) {
             velocity = Vector3.add(velocity, new Vector3(0, 0, -accel * deltaTime));
         }
@@ -150,9 +170,15 @@ public class CameraController implements Tickable, KeyListener, MouseListener {
             pitchVelocity += ANGULAR_ACCELERATION * deltaTime;
         }
 
-        // Optional: Reset camera with R
         if (keysDown.contains(KeyEvent.VK_R)) {
             resetCamera();
+        }
+    }
+
+    // EFFECTS: removes any pressed keys if panel not focused
+    private void clearKeysIfUnfocused() {
+        if (!parent.getPanel().isFocusOwner()) {
+            keysDown.clear();
         }
     }
 

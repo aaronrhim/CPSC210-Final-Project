@@ -152,17 +152,7 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
             return;
         }
 
-        System.out.println("[DEBUG] Parsing expression...");
-        ScalarField newField = null;
-        try {
-            newField = SimulatorUtils.createScalarFieldFromExpression(expr);
-        } catch (Exception ex) {
-            System.out.println("[DEBUG][ERROR] Failed to create scalar field: " + ex.getMessage());
-            ex.printStackTrace();
-            return;
-        }
-        System.out.println("[DEBUG] ScalarField created successfully.");
-
+        ScalarField newField = SimulatorUtils.createScalarFieldFromExpression(expr);
         parent.replaceField(selected, newField);
         SimulatorState.getInstance().getSimulation().setField(newField);
     }
@@ -174,52 +164,47 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
     private void handleButtonPressed(JButton buttonSrc) {
 
         if (buttonSrc == addFieldButton) {
-
-            // debugging
-            System.out.println("[DEBUG] Add Field button clicked.");
-
-            String expr = fieldExpressionInput.getText().trim();
-            System.out.println("[DEBUG] User typed expression: '" + expr + "'");
-
-            if (!SimulatorUtils.checkIfValidExpression(expr)) {
-                return;
-            }
-
-            ScalarField newField = SimulatorUtils.createScalarFieldFromExpression(expr);
-
-            // debugging
-            parent.addField(newField);
-            System.out.println("[DEBUG] Field added to parent list. Total fields now: "
-                    + parent.getListData().size());
-
-            parent.getSwingList().setSelectedValue(newField, true);
-
-            Simulation sim = SimulatorState.getInstance().getSimulation();
-
-            // Set field
-            sim.setField(newField);
-
-            // IMPORTANT FIX: automatically choose a sensible initial point
-            sim.setInitialPoint(0f, 0f); // or any center point of your domain
+            performAddField();
         }
 
         if (buttonSrc == removeFieldButton) {
+            performRemoveField();
+        }
+    }
 
-            ScalarField selected = getSelectedField();
-            if (selected == null) {
-                return;
-            }
+    // MODIFIES: parent list, simulation
+    // EFFECTS: creates a new field from the input text and selects it
+    private void performAddField() {
+        String expr = fieldExpressionInput.getText().trim();
+        if (!SimulatorUtils.checkIfValidExpression(expr)) {
+            return;
+        }
 
-            parent.removeField(selected);
+        ScalarField newField = SimulatorUtils.createScalarFieldFromExpression(expr);
+        parent.addField(newField);
+        parent.getSwingList().setSelectedValue(newField, true);
 
-            if (SimulatorState.getInstance().getSimulation().getField() == selected) {
-                SimulatorState.getInstance().getSimulation().setField(null);
-            }
+        Simulation sim = SimulatorState.getInstance().getSimulation();
+        sim.setField(newField);
+        sim.setInitialPoint(0f, 0f);
+    }
 
-            int size = parent.getSwingList().getModel().getSize();
-            if (size > 0) {
-                parent.getSwingList().setSelectedIndex(size - 1);
-            }
+    // MODIFIES: parent list, simulation
+    // EFFECTS: removes the selected field and updates selection/simulation accordingly
+    private void performRemoveField() {
+        ScalarField selected = getSelectedField();
+        if (selected == null) {
+            return;
+        }
+
+        parent.removeField(selected);
+        if (SimulatorState.getInstance().getSimulation().getField() == selected) {
+            SimulatorState.getInstance().getSimulation().setField(null);
+        }
+
+        int size = parent.getSwingList().getModel().getSize();
+        if (size > 0) {
+            parent.getSwingList().setSelectedIndex(size - 1);
         }
     }
 

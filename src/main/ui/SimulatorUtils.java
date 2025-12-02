@@ -64,8 +64,11 @@ public class SimulatorUtils {
                                                          ActionListener listener,
                                                          String title,
                                                          int row) {
-        parent.add(new JLabel(title, JLabel.RIGHT), makeGbConstraints(0, row, 1));
+        JLabel label = new JLabel(title, JLabel.RIGHT);
         JTextField textField = new JTextField(EDIT_FIELD_COLUMNS);
+        label.setLabelFor(textField);
+
+        parent.add(label, makeGbConstraints(0, row, 1));
         if (listener != null) {
             textField.addActionListener(listener);
         }
@@ -107,22 +110,7 @@ public class SimulatorUtils {
             throw new IllegalArgumentException("Invalid scalar field expression: " + expr);
         }
 
-        BiFunction<Float, Float, Float> fn = (Float x, Float y) -> {
-            try {
-                Expression e = new ExpressionBuilder(expr)
-                        .variables("x", "y")
-                        .build()
-                        .setVariable("x", x)
-                        .setVariable("y", y);
-
-                return (float) e.evaluate();
-
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("Failed to evaluate expression: " + expr);
-            }
-        };
-
-        return new ScalarField(expr, fn);
+        return new ScalarField(expr, buildEvaluator(expr));
     }
 
     // REQUIRES: src and dst non-null
@@ -130,30 +118,9 @@ public class SimulatorUtils {
     // EFFECTS: copies all simulation data from src into dst, preserving paths/parameters where possible
     public static void transferSimData(Simulation src, Simulation dst) {
         synchronized (src) {
-            // Field
-            ScalarField f = src.getField();
-            if (f != null) {
-                dst.setField(f);
-            }
-
-            java.util.List<Vector2> srcPath = src.getPath();
-            if (!srcPath.isEmpty()) {
-                dst.overwritePath(srcPath);
-                System.out.println("[DEBUG] Transferred path with " + srcPath.size() + " points.");
-            } else {
-                Vector2 cp = src.getCurrentPoint();
-                if (cp != null) {
-                    dst.setInitialPoint(cp.getX(), cp.getY());
-                    System.out.println("[DEBUG] Transferred current point: " + cp.toString());
-                }
-            }
-
-            // parameters
-            dst.setLearningRate(src.getLearningRate());
-            dst.setStopThreshold(src.getStopThreshold());
-            dst.setMaxIterations(src.getMaxIterations());
-            dst.setEps(src.getEps());
-            dst.setTimeElapsed(src.getTimeElapsed());
+            copyField(src, dst);
+            copyTrajectory(src, dst);
+            copyParameters(src, dst);
         }
     }
 
@@ -166,5 +133,56 @@ public class SimulatorUtils {
     // EFFECTS: returns gaussian-distributed random float using provided mean/deviation
     public static float randomFloatGaussian(float mean, float deviation) {
         return mean + deviation * (float) RANDOM.nextGaussian();
+    }
+
+    // EFFECTS: builds a bi-function evaluator for the given expression
+    private static BiFunction<Float, Float, Float> buildEvaluator(String expr) {
+        return (Float x, Float y) -> {
+            try {
+                Expression expression = new ExpressionBuilder(expr)
+                        .variables("x", "y")
+                        .build()
+                        .setVariable("x", x)
+                        .setVariable("y", y);
+                return (float) expression.evaluate();
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Failed to evaluate expression: " + expr, ex);
+            }
+        };
+    }
+
+    // MODIFIES: dst
+    // EFFECTS: copies the scalar field reference from src if present
+    private static void copyField(Simulation src, Simulation dst) {
+        ScalarField f = src.getField();
+        if (f != null) {
+            dst.setField(f);
+        }
+    }
+
+    // MODIFIES: dst
+    // EFFECTS: copies path or initial point from src into dst
+    private static void copyTrajectory(Simulation src, Simulation dst) {
+        java.util.List<Vector2> srcPath = src.getPath();
+        if (!srcPath.isEmpty()) {
+            dst.overwritePath(srcPath);
+            System.out.println("[DEBUG] Transferred path with " + srcPath.size() + " points.");
+            return;
+        }
+        Vector2 cp = src.getCurrentPoint();
+        if (cp != null) {
+            dst.setInitialPoint(cp.getX(), cp.getY());
+            System.out.println("[DEBUG] Transferred current point: " + cp.toString());
+        }
+    }
+
+    // MODIFIES: dst
+    // EFFECTS: copies simulation numeric parameters from src to dst
+    private static void copyParameters(Simulation src, Simulation dst) {
+        dst.setLearningRate(src.getLearningRate());
+        dst.setStopThreshold(src.getStopThreshold());
+        dst.setMaxIterations(src.getMaxIterations());
+        dst.setEps(src.getEps());
+        dst.setTimeElapsed(src.getTimeElapsed());
     }
 }

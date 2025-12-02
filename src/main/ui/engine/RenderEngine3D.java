@@ -110,17 +110,19 @@ public class RenderEngine3D implements Tickable {
     // EFFECTS: draws the latest rendered frame into the provided Graphics context
     // NOTE: My "Y" axis is actually my Z axis. Standard in vt
     public void drawCurrentFrame(Graphics g) {
-        Rectangle bounds = g.getClipBounds();
-        // if (bounds == null) { // only uncomment for testing but its really not recommended
-        //     bounds = new Rectangle(parent.getWidth(), parent.getHeight());
-        // }
-        int imgSize = (int) ((float) Math.min(bounds.width, bounds.height) * 0.97f); // looks weird without
+        Rectangle bounds = (g.getClipBounds() != null)
+                ? g.getClipBounds()
+                : new Rectangle(parent.getWidth(), parent.getHeight());
+        int imgSize = (int) (Math.min(bounds.width, bounds.height) * 0.97f);
         int offX = (bounds.width - imgSize) / 2;
         int offY = (bounds.height - imgSize) / 2;
 
         imageSync.lock();
-        g.drawImage(image, offX, offY, imgSize, imgSize, null);
-        imageSync.unlock();
+        try {
+            g.drawImage(image, offX, offY, imgSize, imgSize, null);
+        } finally {
+            imageSync.unlock();
+        }
     }
 
     // REQUIRES: simState != null and imageSync available
@@ -129,16 +131,22 @@ public class RenderEngine3D implements Tickable {
     public void tick() {
         simState.lock();
         imageSync.lock();
+        try {
+            ensureMeshSynced();
+            clearBuffers();
+            renderScene();
+        } finally {
+            imageSync.unlock();
+            simState.unlock();
+        }
+    }
 
-        ensureMeshSynced();
-        clearBuffers();
-
+    // MODIFIES: buffers
+    // EFFECTS: draws axes, grid, and path onto the buffers
+    private void renderScene() {
         drawReferenceLines();
         drawWireGrid();
         drawGradientPath();
-
-        imageSync.unlock();
-        simState.unlock();
     }
 
     // REQUIRES: meshGrid != null, meshGrid.length != 0
