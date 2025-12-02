@@ -21,7 +21,9 @@ public class EditorTabPanel extends JTabbedPane implements Tickable {
     public EditorTabPanel() {
         scalarFieldListPanel = new ScalarFieldListPanel();
         savedListPanel = new SavedListPanel();
-        tickables = java.util.List.of(scalarFieldListPanel, savedListPanel);
+        tickables = new java.util.ArrayList<>();
+        tickables.add(scalarFieldListPanel);
+        tickables.add(savedListPanel);
 
         configureTabs();
     }
