@@ -13,12 +13,12 @@ public class ScalarField {
     private final BiFunction<Float, Float, Float> function;
 
     // Domain bounds for valid evaluation
-    private float xMin = -10.0f;
-    private float xMax = 10.0f;
-    private float yMin = -10.0f;
-    private float yMax = 10.0f;
-    private float zMin = -10.0f;
-    private float zMax = 10.0f;
+    private float xxMin = -10.0f;
+    private float xxMax = 10.0f;
+    private float yyMin = -10.0f;
+    private float yyMax = 10.0f;
+    private float zzMin = -10.0f;
+    private float zzMax = 10.0f;
 
     // REQUIRES: name is non-null and non-empty; function is non-null
     // EFFECTS: creates a scalar field with the given name and function
@@ -41,7 +41,7 @@ public class ScalarField {
     // REQUIRES: x and y lie within the domain bounds
     // EFFECTS: returns f(x, y)
     public float evaluate(float x, float y) {
-        if (x < xMin || x > xMax || y < yMin || y > yMax) {
+        if (x < xxMin || x > xxMax || y < yyMin || y > yyMax) {
             throw new ArgumentOutOfBoundsException("Input (x, y) outside domain.");
         }
 
@@ -70,28 +70,45 @@ public class ScalarField {
         return new Vector2(dfdx, dfdy);
     }
 
-    // REQUIRES: xMax > xMin, yMax > yMin, zMax > zMin
+    // REQUIRES: xxMax > xxMin, yyMax > yyMin, zzMax > zzMin
     // MODIFIES: this
     // EFFECTS: sets the domain bounds of the scalar field and the display range on the Z axis
-    public void setDomain(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax) {
-        if (xMax <= xMin || yMax <= yMin || zMax <= zMin) {
+    public void setDomain(float xxMin, float xxMax, float yyMin, float yyMax, float zzMin, float zzMax) {
+        if (xxMax <= xxMin || yyMax <= yyMin || zzMax <= zzMin) {
             throw new ArgumentOutOfBoundsException("Invalid domain bounds.");
         }
 
-        this.xMin = xMin;
-        this.xMax = xMax;
-        this.yMin = yMin;
-        this.yMax = yMax;
-        this.zMin = zMin;
-        this.zMax = zMax;
+        this.xxMin = xxMin;
+        this.xxMax = xxMax;
+        this.yyMin = yyMin;
+        this.yyMax = yyMax;
+        this.zzMin = zzMin;
+        this.zzMax = zzMax;
     }
 
-    public float getXMin() { return xMin; }
-    public float getXMax() { return xMax; }
-    public float getYMin() { return yMin; }
-    public float getYMax() { return yMax; }
-    public float getZMin() { return zMin; }
-    public float getZMax() { return zMax; }
+    public float getXMin() { 
+        return xxMin; 
+    }
+
+    public float getXMax() { 
+        return xxMax; 
+    }
+    
+    public float getYMin() { 
+        return yyMin; 
+    }
+
+    public float getYMax() { 
+        return yyMax; 
+    }
+
+    public float getZMin() { 
+        return zzMin; 
+    }
+
+    public float getZMax() { 
+        return zzMax; 
+    }
 
     // EFFECTS: returns the field name
     @Override
