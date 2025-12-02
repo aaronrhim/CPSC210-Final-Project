@@ -3,8 +3,6 @@ package ui.panels;
 import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.*;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import ui.SimulatorState;
 
 /**

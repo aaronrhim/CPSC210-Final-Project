@@ -1,0 +1,12 @@
+{
+    // VS Code Java launch configurations
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Main (ui.Main)",
+            "request": "launch",
+            "mainClass": "ui.Main"
+        }
+    ]
+}

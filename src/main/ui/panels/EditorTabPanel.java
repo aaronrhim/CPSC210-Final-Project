@@ -3,6 +3,7 @@ package ui.panels;
 import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import ui.Tickable;
 import javax.swing.*;
+import java.util.*;
 
 /**
  * Left tab panel which is used to swap between saved sim states.
@@ -14,14 +15,14 @@ public class EditorTabPanel extends JTabbedPane implements Tickable {
 
     private final ScalarFieldListPanel scalarFieldListPanel;
     private final SavedListPanel savedListPanel;
-    private final java.util.List<Tickable> tickables;
+    private final List<Tickable> tickables;
 
     // MODIFIES: this
     // EFFECTS: initializes all editor tabs for the editor panel
     public EditorTabPanel() {
         scalarFieldListPanel = new ScalarFieldListPanel();
         savedListPanel = new SavedListPanel();
-        tickables = new java.util.ArrayList<>();
+        tickables = new ArrayList<>();
         tickables.add(scalarFieldListPanel);
         tickables.add(savedListPanel);
 
