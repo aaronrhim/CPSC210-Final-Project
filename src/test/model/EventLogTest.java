@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import org.junit.jupiter.api.Test;
 
-@ExcludeFromJacocoGeneratedReport
 public class EventLogTest {
 
     @Test

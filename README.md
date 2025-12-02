@@ -53,3 +53,7 @@ Sample events observed during a typical run:
 - Simulation random start set to (1.20, -0.80)
 - Simulation started.
 - Simulation reset to defaults.
+
+# Phase 4: Task 3
+
+If I had more time, I would refactor the UI to be more loosely coupled to the simulation state. I would've also tried to fix the Gradient Descent problems if I had time but I'm still facing problems on the engine and GUI level so I wasn't able to fully get to the gd (as listed in the todo.md). Right now `SimulatorState` is a singleton that several panels and utilities touch directly, pulling that behind an explicit controller or state service interface would make it clearer which parts of the UI mutate which parts of the model, and it would be easier to swap in different UI shells or tests (one of the biggest problems at the moment). I would also streamline the rendering stack so `ViewportPanel3D`, `RenderEngine3D`, and `CameraController` communicate via a narrower projection/render API instead of sharing locks and state, which would reduce the chance of concurrency bugs and make the renderer easier to test in isolation. Concurrency while I did enjoy using, did not make the program run much faster, it just allowed there to be multiple inputs. At some point I also considered scrapping it all and try to implement true multithreading but again, I didn't have enough time.

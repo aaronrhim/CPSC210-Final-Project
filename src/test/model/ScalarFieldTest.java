@@ -6,15 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.function.BiFunction;
 
-import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.exceptions.ArgumentOutOfBoundsException;
 import org.junit.jupiter.api.Test;
 
-@ExcludeFromJacocoGeneratedReport
 public class ScalarFieldTest {
 
     @Test
-    void testEvaluateAndGradient() {
+    void evaluateAndGradientWithinDomain() {
         BiFunction<Float, Float, Float> fn = (x, y) -> x * x + y * y;
         ScalarField field = new ScalarField("quad", fn);
         assertEquals(5f, field.evaluate(1f, 2f));
@@ -24,7 +22,7 @@ public class ScalarFieldTest {
     }
 
     @Test
-    void testSetDomainValidation() {
+    void rejectsInvalidDomainOrdering() {
         BiFunction<Float, Float, Float> fn = (x, y) -> x + y;
         ScalarField field = new ScalarField("linear", fn);
         assertThrows(ArgumentOutOfBoundsException.class, () -> field.setDomain(1f, 0f, -1f, 1f, -1f, 1f));

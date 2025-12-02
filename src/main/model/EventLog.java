@@ -27,8 +27,6 @@ public class EventLog implements Iterable<Event> {
      * Gets instance of EventLog - creates it
      * if it doesn't already exist.
      * (Singleton Design Pattern)
-     * 
-     * @return instance of EventLog
      */
     public static EventLog getInstance() {
         return theLog;
@@ -36,8 +34,6 @@ public class EventLog implements Iterable<Event> {
 
     /**
      * Adds an event to the event log.
-     * 
-     * @param e the event to be added
      */
     public void logEvent(Event e) {
         events.add(e);

@@ -9,11 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
 import model.exceptions.ArgumentOutOfBoundsException;
 import org.junit.jupiter.api.Test;
 
-@ExcludeFromJacocoGeneratedReport
 public class SimulationTest {
 
     private ScalarField makeField() {
@@ -22,7 +20,7 @@ public class SimulationTest {
     }
 
     @Test
-    void testStep() {
+    void performsSingleStepAndTracksTime() {
         Simulation sim = new Simulation();
         sim.setField(makeField());
         sim.setInitialPoint(1f, 1f);
@@ -38,7 +36,7 @@ public class SimulationTest {
     }
 
     @Test
-    void testRunEpochs() {
+    void runsMultipleEpochs() {
         Simulation sim = new Simulation();
         sim.setField(makeField());
         sim.setInitialPoint(0.5f, -0.5f);
@@ -47,7 +45,7 @@ public class SimulationTest {
     }
 
     @Test
-    void testOverwritePath() {
+    void overwritesPathAndTracksHead() {
         Simulation sim = new Simulation();
         sim.overwritePath(null);
         assertNull(sim.getCurrentPoint());
@@ -60,7 +58,7 @@ public class SimulationTest {
     }
 
     @Test
-    void testRequiresFieldAndPoint() {
+    void throwsWhenSteppingWithoutSetup() {
         Simulation sim = new Simulation();
         assertThrows(ArgumentOutOfBoundsException.class, () -> sim.step(0.1f));
     }
