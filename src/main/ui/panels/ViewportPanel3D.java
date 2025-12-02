@@ -10,6 +10,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+import model.ModelEventLogger;
 /**
  * Viewport panel for rendering the 3D scalar field.
  */
@@ -96,9 +97,11 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
 
         if (e.getSource() == startButton) {
             SimulatorState.getInstance().setIsRunning(true);
+            ModelEventLogger.logSimulationStarted();
         }
         if (e.getSource() == stopButton) {
             SimulatorState.getInstance().setIsRunning(false);
+            ModelEventLogger.logSimulationStopped();
         }
         if (e.getSource() == resetButton) {
             performReset();
@@ -177,6 +180,7 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         sim.setInitialPoint(randomX, randomY);
         sim.runEpochs(PREVIEW_EPOCHS);
         SimulatorState.getInstance().setIsRunning(false);
+        ModelEventLogger.logRandomStart(randomX, randomY);
     }
 
     // MODIFIES: sim state
@@ -198,6 +202,7 @@ public class ViewportPanel3D extends JPanel implements ActionListener, Tickable 
         fresh.setInitialPoint(0f, 0f);
 
         SimulatorUtils.transferSimData(fresh, sim);
+        ModelEventLogger.logSimulationReset();
     }
 
     // MODIFIES: this

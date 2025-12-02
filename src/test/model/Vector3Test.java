@@ -1,11 +1,9 @@
 package model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ca.ubc.cs.ExcludeFromJacocoGeneratedReport;
-import model.exceptions.NonMatchingClassException;
 import org.junit.jupiter.api.Test;
 
 @ExcludeFromJacocoGeneratedReport
@@ -34,6 +32,6 @@ public class Vector3Test {
     void testEquals() {
         Vector3 v = new Vector3(1f, 2f, 3f);
         assertTrue(v.equals(new Vector3(v)));
-        assertThrows(NonMatchingClassException.class, () -> v.equals(5));
+        assertTrue(!v.equals(5));
     }
 }

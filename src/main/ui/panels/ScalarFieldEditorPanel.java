@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
 
+import model.ModelEventLogger;
 /**
  * JPanel editor used to input functions and modify axes with sliders.
  */
@@ -155,6 +156,7 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         ScalarField newField = SimulatorUtils.createScalarFieldFromExpression(expr);
         parent.replaceField(selected, newField);
         SimulatorState.getInstance().getSimulation().setField(newField);
+        ModelEventLogger.logFieldAdded(newField);
     }
 
     // REQUIRES: buttonSrc is addFieldButton or removeFieldButton
@@ -187,6 +189,7 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
         Simulation sim = SimulatorState.getInstance().getSimulation();
         sim.setField(newField);
         sim.setInitialPoint(0f, 0f);
+        ModelEventLogger.logFieldAdded(newField);
     }
 
     // MODIFIES: parent list, simulation
@@ -197,6 +200,7 @@ public class ScalarFieldEditorPanel extends JPanel implements ActionListener, Ch
             return;
         }
 
+        ModelEventLogger.logFieldRemoved(selected.getName());
         parent.removeField(selected);
         if (SimulatorState.getInstance().getSimulation().getField() == selected) {
             SimulatorState.getInstance().getSimulation().setField(null);

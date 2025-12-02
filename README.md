@@ -45,3 +45,11 @@ This project is part of one of my larger projects which is a gamified Deep Learn
 - You can locate my visual component by looking at the main 3D viewport on the right, which renders the scalar field surface and gradient descent path.
 - You can save the state of my application by selecting a save name in the "Saved Simulations" tab and clicking the "Save" button in the Save editor.
 - You can reload the state of my application by selecting a saved entry in the "Saved Simulations" tab and clicking the "Load" button in the Save editor.
+
+# Phase 4: Task 2
+
+Sample events observed during a typical run:
+- Scalar field added: x^2 + y^2
+- Simulation random start set to (1.20, -0.80)
+- Simulation started.
+- Simulation reset to defaults.
